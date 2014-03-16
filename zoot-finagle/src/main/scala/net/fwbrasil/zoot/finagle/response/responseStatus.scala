@@ -1,10 +1,10 @@
-package net.fwbrasil.zoot.finagle
+package net.fwbrasil.zoot.finagle.response
 
 import org.jboss.netty.handler.codec.http.HttpResponseStatus
 
 import net.fwbrasil.zoot.core.response.ResponseStatus
 
-object StatusTranslator {
+object responseStatus {
 
     private val mapping = Map(
         ResponseStatus.CONTINUE -> HttpResponseStatus.CONTINUE,
@@ -59,12 +59,12 @@ object StatusTranslator {
         ResponseStatus.INSUFFICIENT_STORAGE -> HttpResponseStatus.INSUFFICIENT_STORAGE,
         ResponseStatus.NOT_EXTENDED -> HttpResponseStatus.NOT_EXTENDED
     )
-    
+
     private val reverseMapping = mapping.map(_.swap)
-    
-    def fromHttpStatus(status: HttpResponseStatus) =
+
+    def fromFinagle(status: HttpResponseStatus) =
         reverseMapping(status)
 
-    def toHttpStatus(status: ResponseStatus) =
+    def toFinagle(status: ResponseStatus) =
         mapping(status)
 }

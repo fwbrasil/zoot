@@ -1,13 +1,13 @@
 package net.fwbrasil.zoot.finagle
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.{ Future => ScalaFuture }
-import scala.concurrent.{ Promise => ScalaPromise }
+import scala.concurrent.{Future => ScalaFuture}
+import scala.concurrent.{Promise => ScalaPromise}
 import scala.util.Failure
 import scala.util.Success
 
-import com.twitter.util.{ Future => TwitterFuture }
-import com.twitter.util.{ Promise => TwitterPromise }
+import com.twitter.util.{Future => TwitterFuture}
+import com.twitter.util.{Promise => TwitterPromise}
 
 object FutureBridge {
 
