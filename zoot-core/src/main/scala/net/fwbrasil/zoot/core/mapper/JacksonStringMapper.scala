@@ -16,7 +16,7 @@ class JacksonStringMapper(implicit mirror: Mirror) extends StringMapper {
 
     val contentType = "application/json"
 
-    val mapper = new ObjectMapper()
+    private val mapper = new ObjectMapper()
     mapper.registerModule(DefaultScalaModule)
     mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 
@@ -26,10 +26,10 @@ class JacksonStringMapper(implicit mirror: Mirror) extends StringMapper {
     def encode(value: Any) =
         mapper.writeValueAsString(value)
 
-    private val cache = new ConcurrentHashMap[TypeTag[_], TypeReference[_]]
+    private val typeReferenceCache = new ConcurrentHashMap[TypeTag[_], TypeReference[_]]
 
     private def typeReference[T](implicit tag: TypeTag[T]) =
-        cache.getOrElse(tag, new TypeReference[T] {
+        typeReferenceCache.getOrElse(tag, new TypeReference[T] {
             override def getType = jType(tag.tpe)
         })
 

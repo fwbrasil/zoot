@@ -1,10 +1,10 @@
-package net.fwbrasil.zoot.spray
+package net.fwbrasil.zoot.spray.response
 
 import net.fwbrasil.zoot.core.response.ResponseStatus
-import spray.http.StatusCodes
 import spray.http.StatusCode
+import spray.http.StatusCodes
 
-object StatusTranslator {
+object responseStatus {
 
     private val mapping = Map[ResponseStatus, StatusCode](
         ResponseStatus.CONTINUE -> StatusCodes.Continue,
@@ -62,9 +62,9 @@ object StatusTranslator {
 
     private val reverseMapping = mapping.map(_.swap)
 
-    def fromHttpStatus(status: StatusCode) =
+    def fromSpray(status: StatusCode) =
         reverseMapping(status)
 
-    def toHttpStatus(status: ResponseStatus) =
+    def toSpray(status: ResponseStatus) =
         mapping(status)
 }

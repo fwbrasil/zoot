@@ -6,7 +6,7 @@ object ZootBuild extends Build {
     val scalaReflect = "org.scala-lang" % "scala-reflect" % "2.10.3"
     val scalaCompiler = "org.scala-lang" % "scala-compiler" % "2.10.3"
     val cglib = "cglib" % "cglib-nodep" % "3.1"
-    val smirror = "net.fwbrasil" %% "smirror" % "0.7-SNAPSHOT"
+    val smirror = "net.fwbrasil" %% "smirror" % "0.7"
     val jacksonScala = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.3.0"
     val scalaTest = "org.scalatest" %% "scalatest" % "2.0" % "test"
     val mockito = "org.mockito" % "mockito-all" % "1.9.5"
@@ -28,7 +28,7 @@ object ZootBuild extends Build {
                         jacksonScala, scalaTest, mockito)))
 
     val akkaActor = "com.typesafe.akka" %% "akka-actor" % "2.3.0"
-    val sprayCan = "io.spray" % "spray-can" % "1.3.0" withSources()
+    val sprayCan = "io.spray" % "spray-can" % "1.3.0"
 
     lazy val zootSpray =
         Project(
@@ -39,8 +39,8 @@ object ZootBuild extends Build {
                     Seq(sprayCan, akkaActor, scalaTest)),
             dependencies = Seq(zootCore))
 
-    val finagleHttp = "com.twitter" %% "finagle-http" % "6.10.0"  exclude("org.scala-tools.testing", "specs_2.10") exclude("org.mockito", "mockito-all") exclude("junit", "junit")  withSources()
-    val finagleCore = "com.twitter" %% "finagle-core" % "6.10.0"  exclude("org.scala-tools.testing", "specs_2.10") exclude("org.mockito", "mockito-all") exclude("junit", "junit")  withSources()
+    val finagleHttp = "com.twitter" %% "finagle-http" % "6.10.0"  exclude("org.scala-tools.testing", "specs_2.10") exclude("org.mockito", "mockito-all") exclude("junit", "junit")
+    val finagleCore = "com.twitter" %% "finagle-core" % "6.10.0"  exclude("org.scala-tools.testing", "specs_2.10") exclude("org.mockito", "mockito-all") exclude("junit", "junit")
 
     lazy val zootFinagle =
         Project(
