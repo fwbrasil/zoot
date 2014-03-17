@@ -1,9 +1,8 @@
 # Zoot
-
-### Thin reactive framework to provide and consume REST services
-
 [![Build Status](https://secure.travis-ci.org/fwbrasil/zoot.png)](http://travis-ci.org/fwbrasil/zoot)
 [![Coverage Status](https://coveralls.io/repos/fwbrasil/zoot/badge.png)](https://coveralls.io/r/fwbrasil/zoot)
+
+### Thin reactive framework to provide and consume REST services
 
 # Using zoot
 
