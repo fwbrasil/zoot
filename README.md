@@ -2,6 +2,8 @@
 
 ### Thin reactive framework to provide and consume REST services
 
+[![Build Status](https://secure.travis-ci.org/fwbrasil/zoot.png)](http://travis-ci.org/fwbrasil/zoot)
+
 # Using zoot
 
 ## Contract
@@ -122,6 +124,9 @@ Please refer to the Spray or Finagle documentation for more details on how to cr
 #### Client
 
 ``` scala
+implicit val mirror = scala.reflect.runtime.currentMirror
+implicit val mapper = new JacksonStringMapper
+
 val dispatcher = SprayClient(host = "localhost", port = 8080)
 val client: SomeApi = Client[SomeApi](dispatcher)
 ```
@@ -129,6 +134,8 @@ val client: SomeApi = Client[SomeApi](dispatcher)
 #### Server
 
 ``` scala
+implicit val mirror = scala.reflect.runtime.currentMirror
+implicit val mapper = new JacksonStringMapper
 implicit val system = ActorSystem("SomeSystem")
 implicit val timeout = Timeout(1000 millis)
 
@@ -143,6 +150,9 @@ IO(Http) ! Http.Bind(sprayActor, interface = "localhost", port = 8080)
 #### Client
 
 ``` scala
+implicit val mirror = scala.reflect.runtime.currentMirror
+implicit val mapper = new JacksonStringMapper
+
 val builder = ClientBuilder()
     .codec(Http())
     .hosts(s"$host:$port")
@@ -156,6 +166,9 @@ val client: SomeApi = Client[SomeApi](dispatcher)
 #### Server
 
 ``` scala
+implicit val mirror = scala.reflect.runtime.currentMirror
+implicit val mapper = new JacksonStringMapper
+
 val address = new InetSocketAddress(port)
 val builder =
     ServerBuilder()
