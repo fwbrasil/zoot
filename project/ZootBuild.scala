@@ -62,13 +62,19 @@ object ZootBuild extends Build {
     def commonSettings =
         Defaults.defaultSettings ++ ScoverageSbtPlugin.instrumentSettings ++ Seq(
             organization := "net.fwbrasil",
-            version := "0.4-SNAPSHOT",
+            version := "1.0-SNAPSHOT",
             publishMavenStyle := true,
             scalaVersion := "2.10.3",
             parallelExecution in Test := false,
             parallelExecution in ScoverageSbtPlugin.scoverageTest := false,
-            // publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository"))), 
-            publishTo := Option(Resolver.ssh("fwbrasil.net repo", "fwbrasil.net", 8080) as ("maven") withPermissions ("0644")),
+            publishTo <<= version { v: String =>
+                val nexus = "https://oss.sonatype.org/"
+                val fwbrasil = "http://fwbrasil.net/maven/"
+                if (true || v.trim.endsWith("SNAPSHOT"))
+                    Option(Resolver.ssh("fwbrasil.net repo", "fwbrasil.net", 8080) as ("maven") withPermissions ("0644"))
+                else
+                    Some("releases" at nexus + "service/local/staging/deploy/maven2")
+            },
             resolvers ++= customResolvers,
             compileOrder := CompileOrder.JavaThenScala)
 }
