@@ -22,11 +22,13 @@ case class FinagleServer(
     requestConsumer: Request => Future[Response[String]],
     httpServerBuilder: Service[HttpRequest, HttpResponse] => Server)(implicit ctx: ExecutionContext) {
 
-    val rootService = new Service[HttpRequest, HttpResponse] {
+    private val rootService = new Service[HttpRequest, HttpResponse] {
 
         def apply(httpRequest: HttpRequest) =
             requestConsumer(requestFromFinagle(httpRequest)).map(responseToFinagle(_))
     }
 
-    httpServerBuilder(rootService)
+    private val server = httpServerBuilder(rootService)
+
+    def close = server.close
 }
