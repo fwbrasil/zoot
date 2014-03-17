@@ -9,7 +9,6 @@ object ZootBuild extends Build {
     val smirror = "net.fwbrasil" %% "smirror" % "0.7"
     val jacksonScala = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.3.0"
     val scalaTest = "org.scalatest" %% "scalatest" % "2.0" % "test"
-    val mockito = "org.mockito" % "mockito-all" % "1.9.5"
 
     lazy val zoot =
         Project(
@@ -25,7 +24,7 @@ object ZootBuild extends Build {
             settings = commonSettings ++ Seq(
                 libraryDependencies ++=
                     Seq(scalaReflect, scalaCompiler, cglib, smirror, 
-                        jacksonScala, scalaTest, mockito)))
+                        jacksonScala, scalaTest)))
 
     val akkaActor = "com.typesafe.akka" %% "akka-actor" % "2.3.0"
     val sprayCan = "io.spray" % "spray-can" % "1.3.0"
