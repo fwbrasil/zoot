@@ -133,8 +133,7 @@ implicit val system = ActorSystem("SomeSystem")
 implicit val timeout = Timeout(1000 millis)
 
 val server = Server[SomeApi](new SomeService)
-val sprayServer = new SprayServer(server))
-val sprayActor = system.actorOf(Props(sprayServer))
+val sprayActor = system.actorOf(Props(new SprayServer(server)))
 
 IO(Http) ! Http.Bind(sprayActor, interface = "localhost", port = 8080)
 ```
@@ -157,7 +156,7 @@ val client: SomeApi = Client[SomeApi](dispatcher)
 #### Server
 
 ``` scala
-val address = new InetSocketAddress(nodePort)
+val address = new InetSocketAddress(port)
 val builder =
     ServerBuilder()
         .codec(Http())
