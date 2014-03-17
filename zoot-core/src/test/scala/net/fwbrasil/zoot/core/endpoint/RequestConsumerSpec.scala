@@ -1,6 +1,5 @@
 package net.fwbrasil.zoot.core.endpoint
 
-import scala.concurrent.Await
 import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import scala.reflect.runtime.universe._
@@ -10,6 +9,8 @@ import net.fwbrasil.zoot.core.request.Request
 import net.fwbrasil.zoot.core.request.RequestMethod
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.Spec
+import net.fwbrasil.zoot.core.response.ExceptionResponse
+import net.fwbrasil.zoot.core.response.ExceptionResponse
 
 class RequestConsumerSpec extends Spec {
 
@@ -117,36 +118,36 @@ class RequestConsumerSpec extends Spec {
                 "invalid parameters" - {
                     "missing" in {
                         val exception =
-                            intercept[IllegalArgumentException] {
+                            intercept[ExceptionResponse[String]] {
                                 consumeRequest(
                                     endpointName = "endpoint4",
                                     method = RequestMethod.PUT
                                 ) shouldBe Some(Test("b"))
                             }
-                        exception.getMessage.contains("Missing parameters List(test: net.fwbrasil.zoot.core.endpoint.Test)")
+                        exception.body.contains("Missing parameters List(test: net.fwbrasil.zoot.core.endpoint.Test)")
                     }
                     "wrong value" - {
                         "primitive" - {
                             val exception =
-                                intercept[IllegalArgumentException] {
+                                intercept[ExceptionResponse[String]] {
                                     consumeRequest(
                                         endpointName = "endpoint5",
                                         method = RequestMethod.GET,
                                         params = Map("string" -> "\"someString\"", "int" -> "notanumber")
                                     )
                                 }
-                            exception.getMessage.contains("Invalid value notanumber")
+                            exception.body.contains("Invalid value notanumber")
                         }
                         "civilized" - {
                             val exception =
-                                intercept[IllegalArgumentException] {
+                                intercept[ExceptionResponse[String]] {
                                     consumeRequest(
                                         endpointName = "endpoint4",
                                         method = RequestMethod.PUT,
                                         params = Map("test" -> "\"{ }\"")
                                     )
                                 }
-                            exception.getMessage.contains("Invalid value { }")
+                            exception.body.contains("Invalid value { }")
                         }
                     }
                 }
@@ -189,8 +190,6 @@ class RequestConsumerSpec extends Spec {
     def consumeRequest(endpointName: String, method: RequestMethod): Option[Any] =
         consumeRequest(endpointName, method, "/" + endpointName, Map())
 
-    private def await[R](future: Future[R]) =
-        Await.result(future, Duration.Inf)
     private def uniqueEndpointConsumer[A <: Api: TypeTag] =
         RequestConsumer(uniqueEndpoint[A])
     private def uniqueEndpoint[A <: Api: TypeTag] =

@@ -1,14 +1,14 @@
 package net.fwbrasil.zoot.core.endpoint
 
 import java.net.URLDecoder
-
 import scala.concurrent.Future
-
 import net.fwbrasil.smirror.SParameter
 import net.fwbrasil.zoot.core.Api
 import net.fwbrasil.zoot.core.mapper.StringMapper
 import net.fwbrasil.zoot.core.request.Request
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
+import net.fwbrasil.zoot.core.response.ExceptionResponse
+import net.fwbrasil.zoot.core.response.ResponseStatus
 
 case class RequestConsumer[A <: Api](endpoint: Endpoint[A]) {
 
@@ -35,7 +35,7 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A]) {
         values.collect {
             case (param, None) if (!param.isOption) => param
         }.ifNonEmpty { missing =>
-            throw new IllegalArgumentException(s"Missing parameters $missing to call $sMethod.")
+            throw ExceptionResponse(ResponseStatus.BAD_REQUEST, s"Missing parameters $missing to call $sMethod.")
         }
         values.collect {
             case (param, None) if (param.isOption) => None
@@ -54,10 +54,9 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A]) {
         try mapper.fromString(URLDecoder.decode(value))(param.typeTag)
         catch {
             case e: Exception =>
-                throw new IllegalArgumentException(s"Invalid value $value for parameter $param.", e)
+                throw ExceptionResponse(ResponseStatus.BAD_REQUEST, s"Invalid value $value for parameter $param.")
         }
 
     private def parameters =
         sMethod.parameters.asInstanceOf[List[SParameter[A]]]
-
 }

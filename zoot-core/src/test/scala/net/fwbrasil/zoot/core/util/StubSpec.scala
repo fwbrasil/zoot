@@ -36,9 +36,6 @@ class StubSpec extends Spec {
 
     private def someTraitMethod(name: String) =
         classOf[SomeTrait].getMethods.find(_.getName == name).get
-
-    private def await[R](future: Future[R]) =
-        Await.result(future, Duration.Inf)
 }
 
 trait SomeTrait {

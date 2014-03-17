@@ -22,42 +22,52 @@ class ServerSpec extends Spec {
             "match" - {
                 "static path" in {
                     val request = Request(RequestMethod.GET, "/endpoint1/")
-                    server(
-                        new TestApi {
-                            override def endpoint1 = Future.successful("a")
-                        }
-                    )(request).map(await) shouldBe Some(Response(ResponseStatus.OK, "\"a\""))
+                    await(
+                        server(
+                            new TestApi {
+                                override def endpoint1 = Future.successful("a")
+                            }
+                        )(request)
+                    ) shouldBe Response(ResponseStatus.OK, "\"a\"")
                 }
                 "parametrized path" in {
                     val request = Request(RequestMethod.POST, "/21/endpoint2")
-                    server(
-                        new TestApi {
-                            override def endpoint2(pathValue: Int) = Future.successful(pathValue)
-                        }
-                    )(request).map(await) shouldBe Some(Response(ResponseStatus.OK, "21"))
+                    await(
+                        server(
+                            new TestApi {
+                                override def endpoint2(pathValue: Int) = Future.successful(pathValue)
+                            }
+                        )(request)
+                    ) shouldBe Response(ResponseStatus.OK, "21")
                 }
                 "use the last endpoint that matches" in {
                     val request = Request(RequestMethod.GET, "/endpoint3/")
-                    server(
-                        new TestApi {
-                            override def endpoint3 = Future.successful("a")
-                        }
-                    )(request).map(await) shouldBe Some(Response(ResponseStatus.OK, "\"a\""))
+                    await(
+                        server(
+                            new TestApi {
+                                override def endpoint3 = Future.successful("a")
+                            }
+                        )(request)
+                    ) shouldBe Response(ResponseStatus.OK, "\"a\"")
                 }
                 "propagate non-ok response" in {
                     val status = ResponseStatus.BAD_REQUEST
                     val description = "Bad parameter"
                     val request = Request(RequestMethod.GET, "/endpoint3/")
-                    server(
-                        new TestApi {
-                            override def endpoint3 = throw new ExceptionResponse(status, description)
-                        }
-                    )(request).map(await) shouldBe Some(ExceptionResponse(status, description))
+                    await(
+                        server(
+                            new TestApi {
+                                override def endpoint3 = throw new ExceptionResponse(status, description)
+                            }
+                        )(request)
+                    ) shouldBe ExceptionResponse(status, description)
                 }
             }
             "mismatch" in {
                 val request = Request(RequestMethod.POST, "/invalid/")
-                server(new TestApi {})(request).map(await) shouldBe None
+                await(
+                    server(new TestApi {})(request)
+                ) shouldBe Response(ResponseStatus.NOT_FOUND)
             }
         }
     }
@@ -78,8 +88,4 @@ class ServerSpec extends Spec {
         @endpoint(method = RequestMethod.GET, path = "/endpoint3/")
         def endpoint3: Future[String] = ???
     }
-
-    private def await[R](future: Future[R]) =
-        Await.result(future, Duration.Inf)
-
 }

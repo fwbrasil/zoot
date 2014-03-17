@@ -83,9 +83,6 @@ class ClientSpec extends Spec {
             }
         }
     }
-
-    private def await[R](future: Future[R]) =
-        Await.result(future, Duration.Inf)
 }
 
 case class CaseClass(int: Int, string: String)

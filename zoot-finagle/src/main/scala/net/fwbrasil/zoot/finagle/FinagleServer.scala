@@ -18,19 +18,14 @@ import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.finagle.request.requestFromFinagle
 import net.fwbrasil.zoot.finagle.response.responseToFinagle
 
-class FinagleServer(
-    requestConsumer: Request => Option[Future[Response[String]]],
+case class FinagleServer(
+    requestConsumer: Request => Future[Response[String]],
     httpServerBuilder: Service[HttpRequest, HttpResponse] => Server)(implicit ctx: ExecutionContext) {
 
     val rootService = new Service[HttpRequest, HttpResponse] {
 
         def apply(httpRequest: HttpRequest) =
-            requestConsumer(requestFromFinagle(httpRequest)) match {
-                case Some(future) =>
-                    future.map(responseToFinagle(_))
-                case None =>
-                    notFound
-            }
+            requestConsumer(requestFromFinagle(httpRequest)).map(responseToFinagle(_))
     }
 
     private def notFound =

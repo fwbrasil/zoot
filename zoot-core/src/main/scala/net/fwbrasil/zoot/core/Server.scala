@@ -18,7 +18,7 @@ case class Server[A <: Api: Manifest](instance: A)(
     implicit mapper: StringMapper,
     exctx: ExecutionContext,
     mirror: Mirror)
-    extends (Request => Option[Future[Response[String]]]) {
+    extends (Request => Future[Response[String]]) {
 
     val consumers = Endpoint.listFor[A].map(new RequestConsumer(_))
 
@@ -32,5 +32,7 @@ case class Server[A <: Api: Manifest](instance: A)(
                 case response: ExceptionResponse[_] =>
                     response.asInstanceOf[ExceptionResponse[String]]
             }
+        }.getOrElse {
+            Future.successful(Response(ResponseStatus.NOT_FOUND))
         }
 }

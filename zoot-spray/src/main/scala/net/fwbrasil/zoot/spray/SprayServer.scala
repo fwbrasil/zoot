@@ -14,7 +14,7 @@ import spray.http.HttpRequest
 import spray.http.HttpResponse
 import spray.http.StatusCodes
 
-case class SprayServer(requestConsumer: Request => Option[Future[Response[String]]])(implicit timeout: Timeout)
+case class SprayServer(requestConsumer: Request => Future[Response[String]])(implicit timeout: Timeout)
     extends Actor {
 
     import context.dispatcher
@@ -26,12 +26,8 @@ case class SprayServer(requestConsumer: Request => Option[Future[Response[String
 
         case httpRequest: HttpRequest =>
             val sender = this.sender
-            requestConsumer(requestFromSpray(httpRequest)) match {
-                case Some(future) =>
-                    future.map(responseToSpray(_)).map(sender ! _)
-                case None =>
-                    sender ! HttpResponse(StatusCodes.NotFound)
-            }
+            requestConsumer(requestFromSpray(httpRequest))
+                .map(responseToSpray(_)).map(sender ! _)
     }
 
 }
