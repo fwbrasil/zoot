@@ -1,12 +1,12 @@
 # Zoot
 
-### Thin reactive framework to provide and consume REST services.
+### Thin reactive framework to provide and consume REST services
 
 # Using zoot
 
 ## Contract
 
-Zoot uses traits to provide and consume services. They define the service 'contract' and must extend the Api trait:
+Zoot uses Api traits to define the services 'contract':
 
 ``` scala
 trait SomeApi extends Api {
@@ -18,7 +18,7 @@ trait SomeApi extends Api {
 }
 ```
 
-Observations:
+Notes:
 
 1. Api methods must return Future, otherwise an exception will be thrown.
 2. Apis should always be traits, not classes or abstract classes.
