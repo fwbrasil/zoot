@@ -192,6 +192,7 @@ class RequestConsumerSpec extends Spec {
 
     private def uniqueEndpointConsumer[A <: Api: TypeTag] =
         RequestConsumer(uniqueEndpoint[A])
+        
     private def uniqueEndpoint[A <: Api: TypeTag] =
         Endpoint.listFor[A].onlyOne
 }

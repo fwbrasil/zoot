@@ -115,7 +115,7 @@ The server is a function that can be used with the different binds as defined la
 
 ## Bindings
 
-Please refer to the Spray or Fingle documentation for more details on how to create servers and clients.
+Please refer to the Spray or Finagle documentation for more details on how to create servers and clients.
 
 ### [Spray](http://github.com/spray/spray)
 
