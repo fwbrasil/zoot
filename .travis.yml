@@ -1,0 +1,12 @@
+language: scala
+jdk:
+  - openjdk7
+scala:
+  - 2.10.3
+branches:
+  only:
+    - master
+notifications:
+  email:
+    recipients:
+      - fwbrasil@gmail.com
