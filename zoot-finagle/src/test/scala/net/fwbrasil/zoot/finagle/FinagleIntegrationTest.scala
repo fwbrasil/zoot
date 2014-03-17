@@ -26,7 +26,7 @@ class FinagleIntegrationTest extends Spec {
     implicit val mapper = new JacksonStringMapper
 
     val host = "localhost"
-    val port = 9999
+    val port = 9998
 
     val clientBuilder =
         ClientBuilder()
@@ -49,5 +49,4 @@ class FinagleIntegrationTest extends Spec {
         try await(client.someMethod(1)) shouldBe 2
         finally finagleServer.close
     }
-
 }

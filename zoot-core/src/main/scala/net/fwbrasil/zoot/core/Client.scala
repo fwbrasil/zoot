@@ -19,9 +19,6 @@ import scala.reflect.runtime.universe._
 
 object Client {
 
-    val responseStringType = typeOf[Response[String]]
-    val responseErasureType = typeOf[Response[_]]
-
     def apply[A <: Api: ClassTag](
         dispatcher: Request => Future[Response[String]])(
             implicit apiTag: TypeTag[A],

@@ -10,6 +10,7 @@ import akka.actor.ActorSystem
 import akka.util.Timeout
 import scala.concurrent.duration._
 import akka.actor.Props
+import akka.pattern.ask
 import akka.io.IO
 import spray.can.Http
 
@@ -37,7 +38,7 @@ class SprayIntegrationTest extends Spec {
         val client = Client[TestApi](SprayClient(host, port))
         val server = Server[TestApi](new TestService)
         val sprayActor = system.actorOf(Props(SprayServer(server)))
-        IO(Http) ! Http.Bind(sprayActor, host, port)
+        await(IO(Http) ? Http.Bind(sprayActor, host, port))
         try await(client.someMethod(1)) shouldBe 2
         finally system.shutdown
     }
