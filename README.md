@@ -26,7 +26,6 @@ Notes:
 1. Api methods must return Future, otherwise an exception will be thrown.
 2. Apis should always be traits, not classes or abstract classes.
 3. To agregate Apis, just use commom trait inheritance.
-4. It is possible to use any value or class type as input or output.
 
 
 ### Optional parameters
@@ -92,7 +91,7 @@ val client: SomeApi = Client[SomeApi](dispatcher)
 
 You need to provide a 'real' dispatcher instance. Zoot provides some default bindings as defined latter.
 
-Once you have the client instance, it is possible to use Api methods as commom method invocations:
+Once you have the client instance, use Api methods as commom method invocations:
 
 ``` scala
 val future: Future[Int] = client.simpleMethod(11)
@@ -183,6 +182,25 @@ val finagleServer = FinagleServer(server, builder.build)
 ```
 
 ## Filters
+
+It is possible to define filters for zoot clients and servers. Example:
+
+``` scala
+val requestLogFilter =
+	new Filter {
+        override def apply(request: Request, next: Service) = {
+            log(s"$name request $request")
+            next(request)
+        }
+```
+
+Use the filters when creating a server or client:
+
+``` scala
+val server = requestLogFilter andThen Server[SomeApi](new SomeService)
+
+val client = Client[SomeApi](requestLogFilter andThen dispatcher)
+```
 
 # FAQ
 
