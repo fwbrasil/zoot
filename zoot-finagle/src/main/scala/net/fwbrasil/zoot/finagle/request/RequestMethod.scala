@@ -16,9 +16,9 @@ object requestMethod {
     private val reverseMapping =
         mapping.map(_.swap)
 
-    def fromSpray(method: HttpMethod) =
+    def fromFinagle(method: HttpMethod) =
         mapping(method)
 
-    def toSpray(method: RequestMethod) =
+    def toFinagle(method: RequestMethod) =
         reverseMapping(method)
 }

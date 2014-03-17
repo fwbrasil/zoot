@@ -1,6 +1,5 @@
 package net.fwbrasil.zoot.finagle
 
-import net.fwbrasil.zoot.core.Spec
 import com.twitter.util.{ Future => TwitterFuture }
 import scala.concurrent.{ Future => ScalaFuture }
 import scala.concurrent.ExecutionContext.Implicits.global

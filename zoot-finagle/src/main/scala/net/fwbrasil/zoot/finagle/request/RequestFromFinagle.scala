@@ -11,12 +11,11 @@ object requestFromFinagle {
 
     def apply(httpRequest: HttpRequest) = {
         val (path, params) = parseUri(httpRequest)
-        val headers = httpRequest.headers.entries.map(e => (e.getKey, e.getValue)).toMap
         Request(
-            requestMethod.fromSpray(httpRequest.getMethod),
+            requestMethod.fromFinagle(httpRequest.getMethod),
             path,
             params,
-            headers)
+            headers(httpRequest))
     }
 
     private def parseUri(httpRequest: HttpRequest) =
@@ -41,5 +40,8 @@ object requestFromFinagle {
                     throw new IllegalArgumentException(s"Invalid param value $string")
             }
     }
+
+    private def headers(httpRequest: HttpRequest) =
+        httpRequest.headers.entries.map(e => (e.getKey, e.getValue)).toMap
 
 }
