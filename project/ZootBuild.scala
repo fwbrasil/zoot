@@ -59,7 +59,7 @@ object ZootBuild extends Build {
         "Vaadin Addons" at "http://maven.vaadin.com/vaadin-addons")
 
     def commonSettings =
-        Defaults.defaultSettings ++ ScoverageSbtPlugin.instrumentSettings ++ Seq(
+        Defaults.defaultSettings ++ ScoverageSbtPlugin.instrumentSettings ++ CoverallsPlugin.coverallsSettings ++ Seq(
             organization := "net.fwbrasil",
             version := "1.0-SNAPSHOT",
             publishMavenStyle := true,

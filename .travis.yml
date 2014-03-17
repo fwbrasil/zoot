@@ -10,3 +10,4 @@ notifications:
   email:
     recipients:
       - fwbrasil@gmail.com
+script: "sbt coveralls"
