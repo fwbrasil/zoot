@@ -28,8 +28,5 @@ case class FinagleServer(
             requestConsumer(requestFromFinagle(httpRequest)).map(responseToFinagle(_))
     }
 
-    private def notFound =
-        Future.successful(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND))
-
     httpServerBuilder(rootService)
 }

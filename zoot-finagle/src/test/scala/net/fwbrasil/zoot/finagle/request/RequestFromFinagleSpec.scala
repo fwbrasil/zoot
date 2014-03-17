@@ -9,10 +9,22 @@ import net.fwbrasil.zoot.core.request.RequestMethod
 
 class RequestFromFinagleSpec extends Spec {
 
-    "apply" in {
-        val request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/path?param=value")
-        request.addHeader("someHeader", "someValue")
-        requestFromFinagle(request) shouldBe
-            Request(RequestMethod.GET, "/path", Map("param" -> "value"), Map("someHeader" -> "someValue"))
+    "apply" - {
+        def test(params: String, expectedParams: Map[String, String] = Map()) = {
+            val request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, s"/path$params")
+            request.addHeader("someHeader", "someValue")
+            requestFromFinagle(request) shouldBe
+                Request(RequestMethod.GET, "/path", expectedParams, Map("someHeader" -> "someValue"))
+        }
+
+        "empty params" in test("", Map())
+
+        "non empty" in test("?param=value", Map("param" -> "value"))
+
+        "invalid param" in {
+            intercept[IllegalArgumentException] {
+                test("?invalid")
+            }
+        }
     }
 }
