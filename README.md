@@ -188,7 +188,7 @@ It is possible to define filters for zoot clients and servers. Example:
 val requestLogFilter =
 	new Filter {
         override def apply(request: Request, next: Service) = {
-            log(s"$name request $request")
+            log(s"request $request")
             next(request)
         }
 ```
@@ -215,6 +215,8 @@ https://www.youtube.com/watch?v=CgfZVNv6w2E
 
 This is the buzzword of the moment and zoot uses non-blocking asynchronous IO.
 
-## Ok, now all services in the world must provide Api traits?
+## Api files should rule the world?
 
-If the client and server are using scala and zoot, it is a big win to reuse the Api traits to invoke the services. If not, just write by your own. Anyway you need to specify how to invoke services.
+Probably not. :)
+
+If the client and server are using scala and zoot, it is a big win to reuse the Api traits to invoke the services. If not, just write them by your own. Anyway you need to specify how to invoke services.
