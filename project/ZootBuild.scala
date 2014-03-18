@@ -50,6 +50,13 @@ object ZootBuild extends Build {
                     Seq(finagleHttp, finagleCore, scalaTest)),
             dependencies = Seq(zootCore))
 
+    lazy val zootSample =
+        Project(
+            id = "zoot-sample",
+            base = file("zoot-sample"),
+            settings = commonSettings,
+            dependencies = Seq(zootCore, zootSpray, zootFinagle))
+
     val customResolvers = Seq(
         "spray repo" at "http://repo.spray.io/",
         "Maven" at "http://repo1.maven.org/maven2/",
