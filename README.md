@@ -10,7 +10,7 @@ Google Group - [http://groups.google.com/group/zoot-framework](http://groups.goo
 
 ## Example
 
-Service and client sample implementation for reference:
+Service and client sample implementation:
 
 [https://github.com/fwbrasil/zoot/tree/master/zoot-sample/src/main/scala/net/fwbrasil/zoot/sample/counter](https://github.com/fwbrasil/zoot/tree/master/zoot-sample/src/main/scala/net/fwbrasil/zoot/sample/counter)
 
@@ -129,14 +129,14 @@ class SomeService extends SomeApi {
 val server: Request => Future[Response[String]] = Server[SomeApi](new SomeService)
 ```
 
-The server is a function that can be used with the different binds.
+The server is a function that can be used with the Spray or Finagle bindings.
 
 
 ## Mappers
 
 The request and response values are serialized using a [StringMapper](https://github.com/fwbrasil/zoot/blob/master/zoot-core/src/main/scala/net/fwbrasil/zoot/core/mapper/StringMapper.scala#L6).
 
-Zoot provides the [JacksonStringMapper](https://github.com/fwbrasil/zoot/blob/master/zoot-core/src/main/scala/net/fwbrasil/zoot/core/mapper/JacksonStringMapper.scala#L15) implementation to use json.
+Zoot provides the [JacksonStringMapper](https://github.com/fwbrasil/zoot/blob/master/zoot-core/src/main/scala/net/fwbrasil/zoot/core/mapper/JacksonStringMapper.scala#L15) implementation for json.
 
 
 ## Bindings
