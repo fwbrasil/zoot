@@ -4,6 +4,8 @@
 
 ### Thin reactive framework to provide and consume REST services
 
+Google Group - [http://groups.google.com/group/zoot-framework](http://groups.google.com/group/zoot-framework)
+
 # Using zoot
 
 ## Contract
@@ -237,3 +239,8 @@ This is the buzzword of the moment and zoot uses non-blocking asynchronous IO.
 Probably not. :)
 
 If the client and server are using scala and zoot, it is a big win to reuse the Api traits to communicate. If not, just write them by your own. Anyway you need to specify how to invoke services.
+
+## Is zoot compatible with Scala.js?
+
+No, since it uses runtime proxy generation. It is possible to remove this limitation using macros. Please [open an issue](https://github.com/fwbrasil/zoot/issues/new) if you would like have Scala.js compatibility.
+
