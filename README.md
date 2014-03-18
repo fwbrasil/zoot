@@ -10,7 +10,7 @@ Google Group - [http://groups.google.com/group/zoot-framework](http://groups.goo
 
 ## Example
 
-Service and client sample implementation:
+Server and client sample implementation:
 
 [https://github.com/fwbrasil/zoot/tree/master/zoot-sample/src/main/scala/net/fwbrasil/zoot/sample/counter](https://github.com/fwbrasil/zoot/tree/master/zoot-sample/src/main/scala/net/fwbrasil/zoot/sample/counter)
 
