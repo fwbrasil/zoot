@@ -79,6 +79,16 @@ trait SomeApi extends Api {
 
 The request for '/users/111/name' will invoke 'userName' using '111' for the 'user' parameter
 
+### Response
+
+By default, the response body is the value returned by the method and the http status is '200 Ok'. If the method throws an exeception, '500 Internal Server Error' is returned.
+
+It is possible to modify this behavior:
+
+1. By throwing an [ExceptionResponse](https://github.com/fwbrasil/zoot/blob/master/zoot-core/src/main/scala/net/fwbrasil/zoot/core/response/Response.scala#L21) during the method execution.
+2. By returning a [Future[Response]](https://github.com/fwbrasil/zoot/blob/master/zoot-core/src/main/scala/net/fwbrasil/zoot/core/response/Response.scala#L10).
+
+
 ## Client
 
 The Client object provides Api instances for remote services:
@@ -99,7 +109,6 @@ val otherFuture: Future[String] = client.userName(22)
 
 Please refer to the [Scala Documentation](http://docs.scala-lang.org/overviews/core/futures.html) for more details about Futures.
 
-
 ## Server
 
 The Server object allows to create a server using an Api instance.
@@ -112,13 +121,21 @@ class SomeService extends SomeApi {
 val server: Request => Future[Response[String]] = Server[SomeApi](new SomeService)
 ```
 
-The server is a function that can be used with the different binds as defined latter.
+The server is a function that can be used with the different binds as defined below.
+
+
+## Mappers
+
+The request and response values are serialized using a [StringMapper](https://github.com/fwbrasil/zoot/blob/master/zoot-core/src/main/scala/net/fwbrasil/zoot/core/mapper/StringMapper.scala#L6).
+
+Zoot provides the [JacksonStringMapper](https://github.com/fwbrasil/zoot/blob/master/zoot-core/src/main/scala/net/fwbrasil/zoot/core/mapper/JacksonStringMapper.scala#L15) implementation to use json.
+
 
 ## Bindings
 
-Please refer to the Spray or Finagle documentation for more details on how to create servers and clients.
+Please refer to the [Spray](http://github.com/spray/spray) or [Finagle](http://github.com/twitter/finagle) documentation for more details on how to create servers and clients.
 
-### [Spray](http://github.com/spray/spray)
+### Spray
 
 #### Client
 
@@ -144,7 +161,7 @@ val sprayActor = system.actorOf(Props(new SprayServer(server)))
 IO(Http) ! Http.Bind(sprayActor, interface = "localhost", port = 8080)
 ```
 
-### [Finagle](http://github.com/twitter/finagle)
+### Finagle
 
 #### Client
 
@@ -215,8 +232,8 @@ https://www.youtube.com/watch?v=CgfZVNv6w2E
 
 This is the buzzword of the moment and zoot uses non-blocking asynchronous IO.
 
-## Api files should rule the world?
+## Should Api files rule the world?
 
 Probably not. :)
 
-If the client and server are using scala and zoot, it is a big win to reuse the Api traits to invoke the services. If not, just write them by your own. Anyway you need to specify how to invoke services.
+If the client and server are using scala and zoot, it is a big win to reuse the Api traits to communicate. If not, just write them by your own. Anyway you need to specify how to invoke services.

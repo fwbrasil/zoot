@@ -5,6 +5,7 @@ import net.fwbrasil.zoot.core.response.Response
 import scala.concurrent.Future
 
 trait Filter extends ((Request, (Request => Future[Response[String]])) => Future[Response[String]]) {
+    self =>
 
     protected type Service = Request => Future[Response[String]]
 
@@ -13,7 +14,7 @@ trait Filter extends ((Request, (Request => Future[Response[String]])) => Future
     def andThen(filter: Filter): Filter =
         new Filter {
             override def apply(input: Request, next: Service) =
-                Filter.this.apply(input, filter(_, next))
+                self.apply(input, filter(_, next))
         }
 
     def andThen(service: Service): Service =
