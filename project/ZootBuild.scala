@@ -66,6 +66,7 @@ object ZootBuild extends Build {
             scalaVersion := "2.10.3",
             parallelExecution in Test := false,
             parallelExecution in ScoverageSbtPlugin.scoverageTest := false,
+            parallelExecution in Global := false,
             publishTo <<= version { v: String =>
                 val nexus = "https://oss.sonatype.org/"
                 val fwbrasil = "http://fwbrasil.net/maven/"
