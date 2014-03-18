@@ -26,7 +26,7 @@ Notes:
 
 1. Api methods must return Future, otherwise an exception will be thrown.
 2. Apis should always be traits, not classes or abstract classes.
-3. To agregate Apis, just use commom trait inheritance.
+3. To aggregate Apis, just use common trait inheritance.
 
 
 ### Optional parameters
@@ -65,9 +65,9 @@ trait SomeApi extends Api {
 If the 'someInt' is not specified in the request parameters, the default value '11' is used.
 
 
-### Parametrized paths
+### Parameterized paths
 
-Use parametrized paths to extract parameters from the path:
+Use parameterized paths to extract parameters from the path:
 
 ``` scala
 trait SomeApi extends Api {
@@ -83,7 +83,7 @@ The request for '/users/111/name' will invoke 'userName' using '111' for the 'us
 
 ### Response
 
-By default, the response body is the value returned by the method and the http status is '200 Ok'. If the method throws an exeception, '500 Internal Server Error' is returned.
+By default, the response body is the value returned by the method and the http status is '200 Ok'. If the method throws an exception, '500 Internal Server Error' is returned.
 
 It is possible to modify this behavior:
 
@@ -100,9 +100,9 @@ val dispatcher: Request => Future[Response[String]] = ???
 val client: SomeApi = Client[SomeApi](dispatcher)
 ```
 
-You need to provide a 'real' dispatcher instance. Zoot provides some default bindings as defined latter.
+You need to provide a 'real' dispatcher instance. Zoot provides implementations for Spray and Finagle.
 
-Once you have the client instance, use Api methods as commom method invocations:
+Once you have the client instance, use Api methods as common method invocations:
 
 ``` scala
 val future: Future[Int] = client.simpleMethod(11)
@@ -123,7 +123,7 @@ class SomeService extends SomeApi {
 val server: Request => Future[Response[String]] = Server[SomeApi](new SomeService)
 ```
 
-The server is a function that can be used with the different binds as defined below.
+The server is a function that can be used with the different binds.
 
 
 ## Mappers
