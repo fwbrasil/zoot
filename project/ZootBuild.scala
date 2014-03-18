@@ -74,6 +74,7 @@ object ZootBuild extends Build {
             parallelExecution in Test := false,
             parallelExecution in ScoverageSbtPlugin.scoverageTest := false,
             parallelExecution in Global := false,
+            credentials += Credentials(Path.userHome / ".sbt" / "sonatype.credentials"),
             publishTo <<= version { v: String =>
                 val nexus = "https://oss.sonatype.org/"
                 val fwbrasil = "http://fwbrasil.net/maven/"
@@ -82,6 +83,27 @@ object ZootBuild extends Build {
                 else
                     Some("releases" at nexus + "service/local/staging/deploy/maven2")
             },
+            pomExtra := (
+                <url>http://github.com/fwbrasil/zoot/</url>
+                <licenses>
+                    <license>
+                        <name>LGPL</name>
+                        <url>https://github.com/fwbrasil/zoot/blob/master/LICENSE-LGPL</url>
+                        <distribution>repo</distribution>
+                    </license>
+                </licenses>
+                <scm>
+                    <url>git@github.com:fwbrasil/zoot.git</url>
+                    <connection>scm:git:git@github.com:fwbrasil/zoot.git</connection>
+                </scm>
+                <developers>
+                    <developer>
+                        <id>fwbrasil</id>
+                        <name>Flavio W. Brasil</name>
+                        <url>http://fwbrasil.net</url>
+                    </developer>
+                </developers>
+            ),
             resolvers ++= customResolvers,
             compileOrder := CompileOrder.JavaThenScala)
 }
