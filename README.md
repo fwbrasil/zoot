@@ -8,6 +8,12 @@ Google Group - [http://groups.google.com/group/zoot-framework](http://groups.goo
 
 # Using zoot
 
+## Example
+
+Service and client sample implementation for reference:
+
+[https://github.com/fwbrasil/zoot/tree/master/zoot-sample/src/main/scala/net/fwbrasil/zoot/sample/counter](https://github.com/fwbrasil/zoot/tree/master/zoot-sample/src/main/scala/net/fwbrasil/zoot/sample/counter)
+
 ## Contract
 
 Zoot uses Api traits to define the services 'contract':
