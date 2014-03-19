@@ -32,9 +32,10 @@ trait SomeApi extends Api {
 
 Notes:
 
-1. Api methods must return Future, otherwise an exception will be thrown.
-2. Apis should always be traits, not classes or abstract classes.
-3. To aggregate Apis, just use common trait inheritance.
+1. It is possible to use primitive and non-primitive classes as parameters and return.
+2. Api methods must return Future, otherwise an exception will be thrown.
+4. Apis should always be traits, not classes or abstract classes.
+5. To aggregate Apis, just use common trait inheritance.
 
 
 ### Optional parameters
