@@ -4,7 +4,9 @@
 
 ### Thin reactive framework to provide and consume REST services
 
-Google Group - [http://groups.google.com/group/zoot-framework](http://groups.google.com/group/zoot-framework)
+#### Google Group - [http://groups.google.com/group/zoot-framework](http://groups.google.com/group/zoot-framework)
+
+#### Artifacts are published on maven central.
 
 # Using zoot
 
