@@ -6,7 +6,9 @@
 
 #### Google Group - [http://groups.google.com/group/zoot-framework](http://groups.google.com/group/zoot-framework)
 
-#### Artifacts are published on maven central.
+#### Artifacts are published on maven central:
+
+[http://search.maven.org/#search%7Cga%7C1%7Czoot](http://search.maven.org/#search%7Cga%7C1%7Czoot)
 
 # Using zoot
 
