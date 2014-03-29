@@ -24,10 +24,12 @@ object Endpoint {
             sClassOf[A].methods
                 .zipWith(_.getAnnotation(classOf[EndpointAnnotation]))
                 .collect {
-                    case (sMethod, Some(endpointAnnotation)) =>
+                    case (sMethod, Some(endpointAnnotation)) if (sMethod.isAbstract) =>
                         Endpoint[A](EndpointTemplate(endpointAnnotation.method, endpointAnnotation.path), sMethod)
-                    case (sMethod, None) if (!sMethod.name.contains("$default$") && !sMethod.symbol.isSynthetic) =>
-                        throw new IllegalArgumentException(s"An api trait should have only endpoint methods. Invalid: ${sMethod.name}.")
+                    case (sMethod, Some(endpointAnnotation)) if (!sMethod.isAbstract) =>
+                        throw new IllegalArgumentException(s"Endpoint method should be abstract. Invalid: $sMethod.")
+                    case (sMethod, None) if (sMethod.isAbstract) =>
+                        throw new IllegalArgumentException(s"Only endpoint methods should be abstract. Invalid: $sMethod.")
                 }
         }
 }

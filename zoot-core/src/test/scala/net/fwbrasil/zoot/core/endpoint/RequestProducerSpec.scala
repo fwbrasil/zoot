@@ -95,47 +95,47 @@ class RequestProducerSpec extends Spec {
 
     trait TestApi1 extends Api {
         @endpoint(path = "/path")
-        def goodendpoint = Future.successful(true)
+        def goodendpoint: Future[Boolean]
     }
 
     trait TestApi2 extends Api {
         @endpoint(path = "/path")
-        def goodendpoint = Future.successful(Option(true))
+        def goodendpoint: Future[Option[Boolean]]
     }
 
     trait TestApi3 extends Api {
         @endpoint(path = "/path")
-        def goodendpoint = Future.successful(Test("a"))
+        def goodendpoint: Future[Test]
     }
 
     trait TestApi4 extends Api {
         @endpoint(path = "/path")
-        def goodendpoint = Future.successful(Option(Test("a")))
+        def goodendpoint: Future[Option[Test]]
     }
 
     trait TestApi5 extends Api {
         @endpoint(path = "/path")
-        def goodendpoint = Future.successful(Test("a"))
+        def goodendpoint: Future[Test]
     }
 
     trait TestApi6 extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint1")
-        def endpoint1(param: String) = Future.successful(param)
+        def endpoint1(param: String): Future[String]
     }
 
     trait TestApi7 extends Api {
         @endpoint(method = RequestMethod.POST, path = "/endpoint2/:pathParam/")
-        def endpoint2(pathParam: Int, param: String) = Future.successful((pathParam, param))
+        def endpoint2(pathParam: Int, param: String): Future[(Int, String)]
     }
 
     trait TestApi8 extends Api {
         @endpoint(path = "/path")
-        def goodendpoint = Future.successful(Response())
+        def goodendpoint: Future[Response[String]]
     }
 
     trait TestApi9 extends Api {
         @endpoint(path = "/path")
-        def goodendpoint = Future.successful(Response(body = 1))
+        def goodendpoint: Future[Response[Int]]
     }
 
     private def uniqueEndpointProducer[A <: Api: TypeTag] =

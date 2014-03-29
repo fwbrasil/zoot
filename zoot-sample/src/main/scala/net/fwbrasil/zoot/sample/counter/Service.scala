@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicLong
 import scala.collection.JavaConversions._
 import net.fwbrasil.zoot.core.response.ExceptionResponse
 import scala.concurrent.ExecutionContext.Implicits.global
+import net.fwbrasil.zoot.core.RequestAwareness
 
 class CounterService extends CounterApi {
 

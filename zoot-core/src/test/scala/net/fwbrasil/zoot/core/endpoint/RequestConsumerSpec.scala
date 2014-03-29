@@ -16,8 +16,6 @@ class RequestConsumerSpec extends Spec {
 
     implicit val mirror = scala.reflect.runtime.currentMirror
 
-    val subject = new TestApi {}
-
     "RequestConsumer" - {
         "consumeRequest" - {
             "mismatch" - {
@@ -157,24 +155,41 @@ class RequestConsumerSpec extends Spec {
 
     trait TestApi extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint1")
-        def endpoint1 = Future.successful()
+        def endpoint1: Future[Unit]
 
         @endpoint(method = RequestMethod.DELETE, path = "/endpoint2")
-        def endpoint2() = Future.successful("a")
+        def endpoint2(): Future[String]
 
         @endpoint(method = RequestMethod.POST, path = "/endpoint3")
-        def endpoint3(int: Int, bool: Boolean, float: Float) = Future.successful((int, bool, float))
+        def endpoint3(int: Int, bool: Boolean, float: Float): Future[(Int, Boolean, Float)]
 
         @endpoint(method = RequestMethod.PUT, path = "/endpoint4")
-        def endpoint4(test: Test) = Future.successful(test)
+        def endpoint4(test: Test): Future[Test]
 
         @endpoint(method = RequestMethod.GET, path = "/endpoint5")
-        def endpoint5(string: String, int: Int = 12) = Future.successful((string, int))
+        def endpoint5(string: String, int: Int = 12): Future[(String, Int)]
 
         @endpoint(method = RequestMethod.POST, path = "/endpoint6")
-        def endpoint6(optional: Option[Int]) = Future.successful(optional.getOrElse(21))
+        def endpoint6(optional: Option[Int]): Future[Int]
 
         @endpoint(method = RequestMethod.POST, path = "/endpoint7/:pathParam")
+        def endpoint7(pathParam: String): Future[String]
+    }
+
+    def subject = new TestApi {
+
+        def endpoint1 = Future.successful()
+
+        def endpoint2() = Future.successful("a")
+
+        def endpoint3(int: Int, bool: Boolean, float: Float) = Future.successful((int, bool, float))
+
+        def endpoint4(test: Test) = Future.successful(test)
+
+        def endpoint5(string: String, int: Int = 12) = Future.successful((string, int))
+
+        def endpoint6(optional: Option[Int]) = Future.successful(optional.getOrElse(21))
+
         def endpoint7(pathParam: String) = Future.successful(pathParam)
     }
 
@@ -192,7 +207,7 @@ class RequestConsumerSpec extends Spec {
 
     private def uniqueEndpointConsumer[A <: Api: TypeTag] =
         RequestConsumer(uniqueEndpoint[A])
-        
+
     private def uniqueEndpoint[A <: Api: TypeTag] =
         Endpoint.listFor[A].onlyOne
 }

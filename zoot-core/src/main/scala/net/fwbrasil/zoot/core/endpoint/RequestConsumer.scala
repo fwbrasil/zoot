@@ -6,9 +6,10 @@ import net.fwbrasil.smirror.SParameter
 import net.fwbrasil.zoot.core.Api
 import net.fwbrasil.zoot.core.mapper.StringMapper
 import net.fwbrasil.zoot.core.request.Request
-import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.response.ExceptionResponse
 import net.fwbrasil.zoot.core.response.ResponseStatus
+import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
+import net.fwbrasil.smirror.SMethod
 
 case class RequestConsumer[A <: Api](endpoint: Endpoint[A]) {
 
@@ -17,13 +18,13 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A]) {
     def consumeRequest(request: Request, instance: A, mapper: StringMapper) =
         template.tryParse(request).map { pathParams =>
             val parameters = values(pathParams, request, instance, mapper)
-            try sMethod.invoke(instance, parameters.toSeq: _*).asInstanceOf[Future[Any]]
+            try instance.exec(request, sMethod.asInstanceOf[SMethod[Any]], parameters.toSeq: _*)
             catch {
                 case e: Throwable =>
                     Future.failed(e)
             }
         }
-
+    
     private def values(pathParams: Map[String, String], request: Request, instance: A, mapper: StringMapper) = {
         def getParam(name: String) =
             pathParams.get(name)

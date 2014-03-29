@@ -24,7 +24,7 @@ class ServerSpec extends Spec {
                     val request = Request(RequestMethod.GET, "/endpoint1/")
                     await(
                         server(
-                            new TestApi {
+                            new NotImplementedTestApi {
                                 override def endpoint1 = Future.successful("a")
                             }
                         )(request)
@@ -34,7 +34,7 @@ class ServerSpec extends Spec {
                     val request = Request(RequestMethod.POST, "/21/endpoint2")
                     await(
                         server(
-                            new TestApi {
+                            new NotImplementedTestApi {
                                 override def endpoint2(pathValue: Int) = Future.successful(pathValue)
                             }
                         )(request)
@@ -44,7 +44,7 @@ class ServerSpec extends Spec {
                     val request = Request(RequestMethod.GET, "/endpoint3/")
                     await(
                         server(
-                            new TestApi {
+                            new NotImplementedTestApi {
                                 override def endpoint3 = Future.successful("a")
                             }
                         )(request)
@@ -56,7 +56,7 @@ class ServerSpec extends Spec {
                     val request = Request(RequestMethod.GET, "/endpoint3/")
                     await(
                         server(
-                            new TestApi {
+                            new NotImplementedTestApi {
                                 override def endpoint3 = throw new ExceptionResponse(status, description)
                             }
                         )(request)
@@ -66,7 +66,7 @@ class ServerSpec extends Spec {
             "mismatch" in {
                 val request = Request(RequestMethod.POST, "/invalid/")
                 await(
-                    server(new TestApi {})(request)
+                    server(new NotImplementedTestApi {})(request)
                 ) shouldBe Response(ResponseStatus.NOT_FOUND)
             }
         }
@@ -77,15 +77,25 @@ class ServerSpec extends Spec {
 
     trait TestApi extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint1/")
-        def endpoint1: Future[String] = ???
+        def endpoint1: Future[String]
 
         @endpoint(method = RequestMethod.POST, path = "/:pathValue/endpoint2")
+        def endpoint2(pathValue: Int): Future[Int]
+
+        @endpoint(method = RequestMethod.GET, path = "/endpoint3/")
+        def endpoint3(p: Int): Future[String]
+
+        @endpoint(method = RequestMethod.GET, path = "/endpoint3/")
+        def endpoint3: Future[String]
+    }
+    
+    trait NotImplementedTestApi extends TestApi{
+         def endpoint1: Future[String] = ???
+
         def endpoint2(pathValue: Int): Future[Int] = ???
 
-        @endpoint(method = RequestMethod.GET, path = "/endpoint3/")
         def endpoint3(p: Int): Future[String] = ???
 
-        @endpoint(method = RequestMethod.GET, path = "/endpoint3/")
         def endpoint3: Future[String] = ???
     }
 }

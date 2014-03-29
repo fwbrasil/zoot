@@ -8,7 +8,7 @@ import net.fwbrasil.zoot.core.request.RequestMethod
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.Spec
 
-class RequestConsumerSpecOld extends Spec {
+class EndpointSpec extends Spec {
 
     implicit val mirror = scala.reflect.runtime.currentMirror
 
@@ -46,20 +46,22 @@ class RequestConsumerSpecOld extends Spec {
                 }
             }
             "sorry day" - {
-                "non endpoint method" in {
-
-                    val exception =
-                        intercept[IllegalArgumentException] {
-                            Endpoint.listFor[TestApi4]
-                        }
-                    exception.getMessage.contains("Invalid: evil.") shouldBe true
-                }
                 "non future return" in {
                     val exception =
                         intercept[IllegalArgumentException] {
                             Endpoint.listFor[TestApi5]
                         }
                     exception.getMessage.contains("'endpoint' should return scala.concurrent.Future.") shouldBe true
+                }
+                "non abstract endpoint method" in {
+                    intercept[IllegalArgumentException] {
+                        Endpoint.listFor[TestApi6]
+                    }
+                }
+                "abstract non-endpoint method" in {
+                    intercept[IllegalArgumentException] {
+                        Endpoint.listFor[TestApi7]
+                    }
                 }
             }
         }
@@ -68,35 +70,46 @@ class RequestConsumerSpecOld extends Spec {
 
     trait TestApi1 extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint1")
-        def endpoint1 = Future.successful()
+        def endpoint1: Future[Unit]
 
         @endpoint(method = RequestMethod.POST, path = "/endpoint2")
-        def endpoint2(string: String) = Future.successful(string)
+        def endpoint2(string: String): Future[String]
 
         @endpoint(method = RequestMethod.DELETE, path = "/endpoint3")
-        def endpoint3(string: String, int: Int = 12) = Future.successful((string, int))
+        def endpoint3(string: String, int: Int = 12): Future[(String, Int)]
     }
 
     trait TestApi2 extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint")
-        def endpoint(a: String = "a") = Future.successful(a)
+        def endpoint(a: String = "a"): Future[String]
     }
 
-    val aString = "a"
     trait TestApi3 extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint")
-        def endpoint = Future.successful(aString)
+        def endpoint: Future[String]
     }
 
     trait TestApi4 extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint")
-        def endpoint(a: String) = Future.successful(a)
+        def endpoint(a: String): Future[String]
         def evil = "evil"
     }
 
     trait TestApi5 extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint")
-        def endpoint(a: String = "a") = a
+        def endpoint(a: String = "a"): String
+    }
+
+    trait TestApi6 extends Api {
+        @endpoint(method = RequestMethod.GET, path = "/endpoint")
+        def endpoint(a: String = "a") = Future.successful(a)
+    }
+    
+    trait TestApi7 extends Api {
+        @endpoint(method = RequestMethod.GET, path = "/endpoint")
+        def endpoint(a: String = "a"): Future[String]
+        
+        def wrong: Boolean
     }
 
 }
