@@ -12,8 +12,8 @@ object requestFromFinagle {
     def apply(httpRequest: HttpRequest) = {
         val (path, params) = parseUri(httpRequest)
         Request(
-            requestMethod.fromFinagle(httpRequest.getMethod),
             path,
+            requestMethod.fromFinagle(httpRequest.getMethod),
             params,
             headers(httpRequest))
     }

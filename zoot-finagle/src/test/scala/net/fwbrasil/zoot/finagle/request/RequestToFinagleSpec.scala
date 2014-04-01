@@ -13,7 +13,7 @@ class RequestToFinagleSpec extends Spec {
 
     "apply" in {
         val uri = "/path?param=value"
-        val request = Request(RequestMethod.GET, "/path", Map("param" -> "value"), Map("someHeader" -> "someValue"))
+        val request = Request("/path", RequestMethod.GET, Map("param" -> "value"), Map("someHeader" -> "someValue"))
         val finagle = requestToFinagle(request)
         finagle.getMethod shouldBe HttpMethod.GET
         finagle.getUri shouldBe uri

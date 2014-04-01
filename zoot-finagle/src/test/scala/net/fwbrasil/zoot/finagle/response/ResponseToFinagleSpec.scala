@@ -11,7 +11,7 @@ class ResponseToFinagleSpec extends Spec {
 
     "apply" in {
         val body = "body"
-        val response = Response(ResponseStatus.FOUND, body, Map("someHeader" -> "someValue"))
+        val response = Response(body, ResponseStatus.FOUND, Map("someHeader" -> "someValue"))
         val finagle = responseToFinagle(response)
         finagle.getStatus shouldBe HttpResponseStatus.FOUND
         finagle.getContentString shouldBe body

@@ -7,19 +7,20 @@ sealed trait Response[T] {
 }
 
 object Response {
-    def apply[T](status: ResponseStatus = ResponseStatus.OK,
-              body: T = "",
-              headers: Map[String, String] = Map()): Response[T] =
-        NormalResponse(status, body, headers)
+    def apply[T](
+        body: T = "",
+        status: ResponseStatus = ResponseStatus.OK,
+        headers: Map[String, String] = Map()): Response[T] =
+        NormalResponse(body, status, headers)
 }
 
-case class NormalResponse[T](status: ResponseStatus = ResponseStatus.OK,
-                         body: T = "",
-                         headers: Map[String, String] = Map())
+case class NormalResponse[T](body: T = "",
+                             status: ResponseStatus = ResponseStatus.OK,
+                             headers: Map[String, String] = Map())
     extends Response[T]
 
-case class ExceptionResponse[T](status: ResponseStatus = ResponseStatus.INTERNAL_SERVER_ERROR,
-                             body: T = "",
-                             headers: Map[String, String] = Map())
+case class ExceptionResponse[T](body: T = "",
+                                status: ResponseStatus = ResponseStatus.INTERNAL_SERVER_ERROR,
+                                headers: Map[String, String] = Map())
     extends Exception
     with Response[T]

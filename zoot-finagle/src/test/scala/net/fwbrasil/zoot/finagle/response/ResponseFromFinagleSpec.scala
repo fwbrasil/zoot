@@ -17,6 +17,6 @@ class ResponseFromFinagleSpec extends Spec {
         response.addHeader("someHeader", "someValue")
 
         responseFromFinagle(response) shouldBe
-            Response(ResponseStatus.OK, body, Map("someHeader" -> "someValue"))
+            Response(body, ResponseStatus.OK, Map("someHeader" -> "someValue"))
     }
 }

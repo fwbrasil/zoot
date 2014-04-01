@@ -44,7 +44,7 @@ object Client {
                         case response if (response.status == ResponseStatus.OK) =>
                             mapper.fromString(response.body)(producer.payloadTypeTag)
                         case response =>
-                            throw new ExceptionResponse(response.status, response.body, response.headers)
+                            throw new ExceptionResponse(response.body, response.status, response.headers)
                     }
                 }
         }

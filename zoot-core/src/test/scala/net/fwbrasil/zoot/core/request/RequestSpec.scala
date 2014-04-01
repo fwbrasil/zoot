@@ -8,7 +8,7 @@ class RequestSpec extends Spec {
 
     "method" - {
         def test(method: RequestMethod) =
-            Request(method, path).method shouldBe method
+            Request(path, method).method shouldBe method
 
         "get" in test(RequestMethod.GET)
         "post" in test(RequestMethod.POST)
@@ -17,34 +17,34 @@ class RequestSpec extends Spec {
     }
 
     "path" in {
-        Request(RequestMethod.POST, path).path shouldBe path
+        Request(path, RequestMethod.POST).path shouldBe path
     }
 
     "params" - {
 
         "empty by default" in {
-            Request(RequestMethod.POST, path).params shouldBe Map()
+            Request(path, RequestMethod.POST).params shouldBe Map()
         }
 
         "specified value" in {
             val params = Map("key" -> "value")
-            Request(RequestMethod.POST, path, params = params).params shouldBe params
+            Request(path,RequestMethod.POST,  params = params).params shouldBe params
         }
     }
 
     "headers" - {
 
         "empty by default" in {
-            Request(RequestMethod.POST, path).headers shouldBe Map()
+            Request(path, RequestMethod.POST).headers shouldBe Map()
         }
 
         "specified value" in {
             val headers = Map("key" -> "value")
-            Request(RequestMethod.POST, path, headers = headers).headers shouldBe headers
+            Request(path, RequestMethod.POST, headers = headers).headers shouldBe headers
         }
     }
 
     "requestPath" in {
-        Request(RequestMethod.POST, path).requestPath shouldBe RequestPath(path)
+        Request(path, RequestMethod.POST).requestPath shouldBe RequestPath(path)
     }
 }

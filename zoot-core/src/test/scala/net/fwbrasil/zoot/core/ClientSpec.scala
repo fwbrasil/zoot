@@ -21,16 +21,16 @@ class ClientSpec extends Spec {
         "without parameters" in {
             val client =
                 Client[TestApi] { request =>
-                    request shouldBe Request(RequestMethod.GET, "/endpoint1/", headers = Map("Content-Type" -> mapper.contentType))
-                    Future.successful(Response(ResponseStatus.OK, "\"a\""))
+                    request shouldBe Request("/endpoint1/", headers = Map("Content-Type" -> mapper.contentType))
+                    Future.successful(Response("\"a\""))
                 }
             await(client.endpoint1) shouldBe "a"
         }
         "with path param" in {
             val client =
                 Client[TestApi] { request =>
-                    request shouldBe Request(RequestMethod.POST, "/12/endpoint2/", params = Map("pathValue" -> "12"), headers = Map("Content-Type" -> mapper.contentType))
-                    Future.successful(Response(ResponseStatus.OK, "34"))
+                    request shouldBe Request("/12/endpoint2/", method = RequestMethod.POST, params = Map("pathValue" -> "12"), headers = Map("Content-Type" -> mapper.contentType))
+                    Future.successful(Response("34"))
                 }
             await(client.endpoint2(12)) shouldBe 34
         }
@@ -39,7 +39,7 @@ class ClientSpec extends Spec {
             val description = "some resource not found"
             val client =
                 Client[TestApi] { _ =>
-                    Future.successful(Response(status, description))
+                    Future.successful(Response(description, status))
                 }
             val exception =
                 intercept[ExceptionResponse[_]] {
@@ -61,8 +61,8 @@ class ClientSpec extends Spec {
                     await(client.endpoint3) shouldBe response
                 }
 
-                "ok" in test(Response(ResponseStatus.OK))
-                "nok" in test(Response(ResponseStatus.BAD_GATEWAY))
+                "ok" in test(Response())
+                "nok" in test(Response(status = ResponseStatus.BAD_GATEWAY))
             }
 
             "Response[CaseClass]" - {
@@ -75,10 +75,10 @@ class ClientSpec extends Spec {
                 }
 
                 "ok" in {
-                    test(NormalResponse(ResponseStatus.OK, CaseClass(1, "s")))
+                    test(NormalResponse(CaseClass(1, "s")))
                 }
                 "nok" in {
-                    test(NormalResponse(ResponseStatus.BAD_GATEWAY, CaseClass(3, "b")))
+                    test(NormalResponse(CaseClass(3, "b"), ResponseStatus.BAD_GATEWAY))
                 }
             }
         }

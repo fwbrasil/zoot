@@ -196,7 +196,7 @@ class RequestConsumerSpec extends Spec {
     def consumeRequest(endpointName: String, method: RequestMethod, path: String, params: Map[String, String] = Map()): Option[Any] =
         Endpoint.listFor[TestApi]
             .find(_.sMethod.name == endpointName).map(RequestConsumer(_)).get
-            .consumeRequest(Request(method, path, params), subject, new JacksonStringMapper)
+            .consumeRequest(Request(path, method, params), subject, new JacksonStringMapper)
             .map(await)
 
     def consumeRequest(endpointName: String, method: RequestMethod, params: Map[String, String]): Option[Any] =

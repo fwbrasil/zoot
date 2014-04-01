@@ -21,53 +21,53 @@ class ServerSpec extends Spec {
         "should consume requests" - {
             "match" - {
                 "static path" in {
-                    val request = Request(RequestMethod.GET, "/endpoint1/")
+                    val request = Request("/endpoint1/")
                     await(
                         server(
                             new NotImplementedTestApi {
                                 override def endpoint1 = Future.successful("a")
                             }
                         )(request)
-                    ) shouldBe Response(ResponseStatus.OK, "\"a\"")
+                    ) shouldBe Response("\"a\"")
                 }
                 "parametrized path" in {
-                    val request = Request(RequestMethod.POST, "/21/endpoint2")
+                    val request = Request("/21/endpoint2", method = RequestMethod.POST)
                     await(
                         server(
                             new NotImplementedTestApi {
                                 override def endpoint2(pathValue: Int) = Future.successful(pathValue)
                             }
                         )(request)
-                    ) shouldBe Response(ResponseStatus.OK, "21")
+                    ) shouldBe Response("21")
                 }
                 "use the last endpoint that matches" in {
-                    val request = Request(RequestMethod.GET, "/endpoint3/")
+                    val request = Request("/endpoint3/")
                     await(
                         server(
                             new NotImplementedTestApi {
                                 override def endpoint3 = Future.successful("a")
                             }
                         )(request)
-                    ) shouldBe Response(ResponseStatus.OK, "\"a\"")
+                    ) shouldBe Response("\"a\"")
                 }
                 "propagate non-ok response" in {
                     val status = ResponseStatus.BAD_REQUEST
                     val description = "Bad parameter"
-                    val request = Request(RequestMethod.GET, "/endpoint3/")
+                    val request = Request("/endpoint3/")
                     await(
                         server(
                             new NotImplementedTestApi {
-                                override def endpoint3 = throw new ExceptionResponse(status, description)
+                                override def endpoint3 = throw new ExceptionResponse(description, status)
                             }
                         )(request)
-                    ) shouldBe ExceptionResponse(status, description)
+                    ) shouldBe ExceptionResponse(description, status)
                 }
             }
             "mismatch" in {
-                val request = Request(RequestMethod.POST, "/invalid/")
+                val request = Request("/invalid/", method = RequestMethod.POST)
                 await(
                     server(new NotImplementedTestApi {})(request)
-                ) shouldBe Response(ResponseStatus.NOT_FOUND)
+                ) shouldBe Response(status = ResponseStatus.NOT_FOUND)
             }
         }
     }

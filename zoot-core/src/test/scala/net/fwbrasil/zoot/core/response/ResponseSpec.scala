@@ -5,7 +5,7 @@ import net.fwbrasil.zoot.core.Spec
 class ResponseSpec extends Spec {
 
     "default builder" in {
-        Response() shouldBe NormalResponse(ResponseStatus.OK, "", Map())
+        Response() shouldBe NormalResponse()
     }
 
     val status = ResponseStatus.CONTINUE
@@ -15,11 +15,11 @@ class ResponseSpec extends Spec {
     "normal response" - {
 
         "default values" in {
-            NormalResponse() shouldBe NormalResponse(ResponseStatus.OK, "", Map())
+            NormalResponse() shouldBe NormalResponse()
         }
 
         "specified values" in {
-            val response = NormalResponse(status, body, headers)
+            val response = NormalResponse(body, status, headers)
             response.status shouldBe status
             response.body shouldBe body
             response.headers shouldBe headers
@@ -29,11 +29,11 @@ class ResponseSpec extends Spec {
     "exception response" - {
 
         "default values" in {
-            ExceptionResponse() shouldBe ExceptionResponse(ResponseStatus.INTERNAL_SERVER_ERROR, "", Map())
+            ExceptionResponse() shouldBe ExceptionResponse("", ResponseStatus.INTERNAL_SERVER_ERROR, Map())
         }
 
         "specified values" in {
-            val response = ExceptionResponse(status, body, headers)
+            val response = ExceptionResponse(body, status, headers)
             response.status shouldBe status
             response.body shouldBe body
             response.headers shouldBe headers
@@ -43,7 +43,7 @@ class ResponseSpec extends Spec {
     "throw exception response" in {
         val response =
             intercept[ExceptionResponse[_]] {
-                throw ExceptionResponse(status, body, headers)
+                throw ExceptionResponse(body, status, headers)
             }
         response.status shouldBe status
         response.body shouldBe body

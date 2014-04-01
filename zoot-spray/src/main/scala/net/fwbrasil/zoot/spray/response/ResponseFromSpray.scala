@@ -9,7 +9,7 @@ object responseFromSpray {
         val body = response.entity.asString
         val status = responseStatus.fromSpray(response.status)
         val headers = headersMap(response)
-        Response(status, body, headers)
+        Response(body, status, headers)
     }
 
     private def headersMap(response: HttpResponse) =

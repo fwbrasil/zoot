@@ -13,6 +13,6 @@ class ResponseFromSpraySpec extends Spec {
         val response = HttpResponse(StatusCodes.OK, body, List(new RawHeader("someHeader", "someValue")))
 
         responseFromSpray(response) shouldBe
-            Response(ResponseStatus.OK, body, Map("someHeader" -> "someValue"))
+            Response(body, ResponseStatus.OK, Map("someHeader" -> "someValue"))
     }
 }

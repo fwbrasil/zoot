@@ -43,7 +43,7 @@ class EndpointTemplateSpec extends Spec {
             "successful parse" in {
                 for (method <- RequestMethod.values) {
                     val template = EndpointTemplate(method, pathTemplate)
-                    val request = Request(method, requestPath)
+                    val request = Request(requestPath, method)
                     template.tryParse(request) shouldBe expected
                 }
             }
@@ -51,14 +51,14 @@ class EndpointTemplateSpec extends Spec {
                 for (method <- RequestMethod.values) {
                     val otherMethod = RequestMethod.values.filter(_ != method).head
                     val template = EndpointTemplate(method, pathTemplate)
-                    val request = Request(otherMethod, requestPath)
+                    val request = Request(requestPath, otherMethod)
                     template.tryParse(request) shouldBe None
                 }
             }
             "wrong request path" in {
                 for (method <- RequestMethod.values) {
                     val template = EndpointTemplate(method, pathTemplate)
-                    val request = Request(method, "/some/other/path")
+                    val request = Request("/some/other/path", method)
                     template.tryParse(request) shouldBe None
                 }
             }
@@ -66,7 +66,7 @@ class EndpointTemplateSpec extends Spec {
                 for (method <- RequestMethod.values) {
                     val otherMethod = RequestMethod.values.filter(_ != method).head
                     val template = EndpointTemplate(method, pathTemplate)
-                    val request = Request(otherMethod, "/some/other/path")
+                    val request = Request("/some/other/path", otherMethod)
                     template.tryParse(request) shouldBe None
                 }
             }

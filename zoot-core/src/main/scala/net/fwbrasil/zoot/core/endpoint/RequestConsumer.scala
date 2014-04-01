@@ -24,7 +24,7 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A]) {
                     Future.failed(e)
             }
         }
-    
+
     private def values(pathParams: Map[String, String], request: Request, instance: A, mapper: StringMapper) = {
         def getParam(name: String) =
             pathParams.get(name)
@@ -36,7 +36,7 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A]) {
         values.collect {
             case (param, None) if (!param.isOption) => param
         }.ifNonEmpty { missing =>
-            throw ExceptionResponse(ResponseStatus.BAD_REQUEST, s"Missing parameters $missing to call $sMethod.")
+            throw ExceptionResponse(s"Missing parameters $missing to call $sMethod.", ResponseStatus.BAD_REQUEST)
         }
         values.collect {
             case (param, None) if (param.isOption) => None
@@ -55,7 +55,7 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A]) {
         try mapper.fromString(URLDecoder.decode(value))(param.typeTag)
         catch {
             case e: Exception =>
-                throw ExceptionResponse(ResponseStatus.BAD_REQUEST, s"Invalid value $value for parameter $param.")
+                throw ExceptionResponse(s"Invalid value $value for parameter $param.", ResponseStatus.BAD_REQUEST)
         }
 
     private def parameters =

@@ -1,8 +1,8 @@
 package net.fwbrasil.zoot.core.request
 
 case class Request(
-    method: RequestMethod = RequestMethod.GET,
     path: String,
+    method: RequestMethod = RequestMethod.GET,
     params: Map[String, String] = Map(),
     headers: Map[String, String] = Map()) {
 

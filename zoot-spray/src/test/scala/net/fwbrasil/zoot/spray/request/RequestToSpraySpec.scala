@@ -11,7 +11,7 @@ class RequestToSpraySpec extends Spec {
 
     "apply" in {
         val uri = "/path?param=value"
-        val request = Request(RequestMethod.GET, "/path", Map("param" -> "value"), Map("someHeader" -> "someValue"))
+        val request = Request("/path", RequestMethod.GET, Map("param" -> "value"), Map("someHeader" -> "someValue"))
         val spray = requestToSpray(request)
         spray.method shouldBe HttpMethods.GET
         spray.uri.toString shouldBe uri

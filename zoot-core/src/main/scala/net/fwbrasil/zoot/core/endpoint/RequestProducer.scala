@@ -29,8 +29,8 @@ case class RequestProducer[A <: Api](endpoint: Endpoint[A]) {
         val params = sMethod.parameters.map(_.name).zip(args).toMap
         val pathString = template.path.forParameters(params(_).toString).toString
         Request(
-            template.method,
             pathString,
+            template.method,
             params.mapValues(encode(_, mapper)),
             Map("Content-Type" -> mapper.contentType)
         )

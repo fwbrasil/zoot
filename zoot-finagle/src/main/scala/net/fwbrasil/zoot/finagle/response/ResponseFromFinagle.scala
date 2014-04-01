@@ -14,7 +14,7 @@ object responseFromFinagle {
         val body = httpResponse.getContent.toString(Charset.defaultCharset)
         val status = responseStatus.fromFinagle(httpResponse.getStatus)
         val headers = headersMap(httpResponse)
-        Response(status, body, headers)
+        Response(body, status, headers)
     }
     
     private def headersMap(httpResponse: HttpResponse) =

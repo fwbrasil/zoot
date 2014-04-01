@@ -7,8 +7,8 @@ object requestFromSpray {
 
     def apply(httpRequest: HttpRequest) =
         Request(
-            requestMethod.fromSpray(httpRequest.method),
             path(httpRequest),
+            requestMethod.fromSpray(httpRequest.method),
             params(httpRequest),
             headers(httpRequest))
 

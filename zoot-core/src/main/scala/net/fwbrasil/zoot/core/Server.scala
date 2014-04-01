@@ -27,12 +27,12 @@ case class Server[A <: Api: Manifest](instance: A)(
             _.consumeRequest(request, instance, mapper)
         }.map { future =>
             future.map { value =>
-                Response(ResponseStatus.OK, mapper.toString(value))
+                Response(mapper.toString(value))
             }.recover {
                 case response: ExceptionResponse[_] =>
                     response.asInstanceOf[ExceptionResponse[String]]
             }
         }.getOrElse {
-            Future.successful(Response(ResponseStatus.NOT_FOUND))
+            Future.successful(Response(status = ResponseStatus.NOT_FOUND))
         }
 }
