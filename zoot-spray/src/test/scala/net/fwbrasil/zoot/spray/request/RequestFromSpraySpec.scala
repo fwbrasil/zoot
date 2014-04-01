@@ -12,6 +12,6 @@ class RequestFromSpraySpec extends Spec {
     "apply" in {
         val request = HttpRequest(HttpMethods.GET, "/path?param=value", headers = List(RawHeader("someHeader", "someValue")))
         requestFromSpray(request) shouldBe
-            Request("/path", RequestMethod.GET, Map("param" -> "value"), Map("someHeader" -> "someValue"))
+            Request("/path", RequestMethod.GET, Map("param" -> "value"), Map("someHeader" -> "someValue"), Some(request))
     }
 }

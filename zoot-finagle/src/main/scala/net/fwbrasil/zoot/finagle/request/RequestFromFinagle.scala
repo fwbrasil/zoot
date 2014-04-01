@@ -15,7 +15,8 @@ object requestFromFinagle {
             path,
             requestMethod.fromFinagle(httpRequest.getMethod),
             params,
-            headers(httpRequest))
+            headers(httpRequest),
+            Some(httpRequest))
     }
 
     private def parseUri(httpRequest: HttpRequest) =

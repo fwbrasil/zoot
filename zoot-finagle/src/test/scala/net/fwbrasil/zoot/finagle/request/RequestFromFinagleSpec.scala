@@ -14,7 +14,7 @@ class RequestFromFinagleSpec extends Spec {
             val request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, s"/path$params")
             request.addHeader("someHeader", "someValue")
             requestFromFinagle(request) shouldBe
-                Request("/path", RequestMethod.GET, expectedParams, Map("someHeader" -> "someValue"))
+                Request("/path", RequestMethod.GET, expectedParams, Map("someHeader" -> "someValue"), Some(request))
         }
 
         "empty params" in test("", Map())

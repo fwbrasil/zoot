@@ -10,7 +10,8 @@ object requestFromSpray {
             path(httpRequest),
             requestMethod.fromSpray(httpRequest.method),
             params(httpRequest),
-            headers(httpRequest))
+            headers(httpRequest),
+            Some(httpRequest))
 
     private def path(httpRequest: HttpRequest) =
         httpRequest.uri.path.toString

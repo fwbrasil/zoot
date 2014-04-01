@@ -17,34 +17,59 @@ class RequestSpec extends Spec {
     }
 
     "path" in {
-        Request(path, RequestMethod.POST).path shouldBe path
+        Request(path).path shouldBe path
     }
 
     "params" - {
 
         "empty by default" in {
-            Request(path, RequestMethod.POST).params shouldBe Map()
+            Request(path).params shouldBe Map()
         }
 
         "specified value" in {
             val params = Map("key" -> "value")
-            Request(path,RequestMethod.POST,  params = params).params shouldBe params
+            Request(path, params = params).params shouldBe params
         }
     }
 
     "headers" - {
 
         "empty by default" in {
-            Request(path, RequestMethod.POST).headers shouldBe Map()
+            Request(path).headers shouldBe Map()
         }
 
         "specified value" in {
             val headers = Map("key" -> "value")
-            Request(path, RequestMethod.POST, headers = headers).headers shouldBe headers
+            Request(path, headers = headers).headers shouldBe headers
         }
     }
 
     "requestPath" in {
-        Request(path, RequestMethod.POST).requestPath shouldBe RequestPath(path)
+        Request(path).requestPath shouldBe RequestPath(path)
+    }
+
+    "originalRequest" - {
+
+        "empty by default" in {
+            Request(path).originalRequest shouldBe None
+        }
+
+        "specified value" in {
+            val originalRequest = Some(new Object)
+            Request(path, originalRequest = originalRequest).originalRequest shouldBe originalRequest
+        }
+    }
+    
+    "host" - {
+        
+        "request with host header" in {
+            val host = "some.com"
+            val headers = Map("Host" -> host)
+            Request(path, headers = headers).host shouldBe Some(host)
+        }
+        
+        "request without" in {
+            Request(path).host shouldBe None
+        }
     }
 }
