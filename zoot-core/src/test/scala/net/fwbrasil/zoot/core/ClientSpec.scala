@@ -49,6 +49,23 @@ class ClientSpec extends Spec {
             exception.body shouldBe description
         }
 
+        "with option return" - {
+            "None for not found" in {
+                val client =
+                    Client[TestApi] { _ =>
+                        Future.successful(Response(status = ResponseStatus.NOT_FOUND))
+                    }
+                await(client.endpoint5) shouldBe None
+            }
+            "Some for ok" in {
+                val client =
+                    Client[TestApi] { _ =>
+                        Future.successful(Response("1"))
+                    }
+                await(client.endpoint5) shouldBe Some(1)
+            }
+        }
+
         "with response return" - {
 
             "Response[String]" - {
@@ -99,4 +116,7 @@ trait TestApi extends Api {
 
     @endpoint(method = RequestMethod.GET, path = "/endpoint4")
     def endpoint4: Future[Response[CaseClass]]
+
+    @endpoint(method = RequestMethod.GET, path = "/endpoint5")
+    def endpoint5: Future[Option[Int]]
 }

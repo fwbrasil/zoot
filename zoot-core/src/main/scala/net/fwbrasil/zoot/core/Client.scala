@@ -35,6 +35,10 @@ object Client {
             (method, args) =>
                 producerByJavaMethod.get(method).map { producer =>
                     dispatcher(producer.produceRequest(args.toList, mapper)).map {
+                        case response if (producer.payloadIsOption && response.status == ResponseStatus.NOT_FOUND) =>
+                            None
+                        case response if (producer.payloadIsOption && response.status != ResponseStatus.NOT_FOUND) =>
+                            Option(mapper.fromString(response.body)(producer.payloadOptionType.get))
                         case response if (producer.payloadIsResponseString) =>
                             response
                         case response: NormalResponse[_] if (producer.payloadIsResponse) =>

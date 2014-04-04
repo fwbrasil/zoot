@@ -7,6 +7,9 @@ import net.fwbrasil.zoot.core.mapper.StringMapper
 import net.fwbrasil.zoot.core.request.Request
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.response.Response
+import scala.reflect.runtime.universe._
+import scala.reflect.api.Universe
+import scala.reflect.api.Mirror
 
 case class RequestProducer[A <: Api](endpoint: Endpoint[A]) {
 
@@ -17,9 +20,26 @@ case class RequestProducer[A <: Api](endpoint: Endpoint[A]) {
 
     val payloadIsResponse =
         payloadTypeTag.tpe.erasure =:= typeOf[Response[_]]
-    
+
     val payloadIsResponseString =
         payloadTypeTag.tpe <:< typeOf[Response[String]]
+
+    val payloadIsOption =
+        payloadTypeTag.tpe.erasure <:< typeOf[Option[_]]
+
+    val payloadOptionType =
+        payloadTypeTag.tpe match {
+            case tp: TypeRefApi =>
+                tp.args.headOption.map { typ =>
+                    new TypeTag[Any] {
+                        override def in[U <: Universe with Singleton](otherMirror: Mirror[U]): U#TypeTag[Any] = ???
+                        val mirror = sMethod.runtimeMirror
+                        def tpe = typ
+                    }
+                }
+            case other =>
+                None
+        }
 
     val javaMethod =
         sMethod.javaMethodOption

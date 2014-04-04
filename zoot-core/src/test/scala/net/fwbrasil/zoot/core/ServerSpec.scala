@@ -62,6 +62,26 @@ class ServerSpec extends Spec {
                         )(request)
                     ) shouldBe ExceptionResponse(description, status)
                 }
+                "return not found for None" in {
+                    val request = Request("/endpoint4")
+                    await(
+                        server(
+                            new NotImplementedTestApi {
+                                override def endpoint4 = Future.successful(None)
+                            }
+                        )(request)
+                    ) shouldBe Response(status = ResponseStatus.NOT_FOUND)
+                }
+                "return the value for Some" in {
+                    val request = Request("/endpoint4")
+                    await(
+                        server(
+                            new NotImplementedTestApi {
+                                override def endpoint4 = Future.successful(Some(1))
+                            }
+                        )(request)
+                    ) shouldBe Response("1")
+                }
             }
             "mismatch" in {
                 val request = Request("/invalid/", method = RequestMethod.POST)
@@ -87,15 +107,20 @@ class ServerSpec extends Spec {
 
         @endpoint(method = RequestMethod.GET, path = "/endpoint3/")
         def endpoint3: Future[String]
+
+        @endpoint(method = RequestMethod.GET, path = "/endpoint4")
+        def endpoint4: Future[Option[Int]]
     }
-    
-    trait NotImplementedTestApi extends TestApi{
-         def endpoint1: Future[String] = ???
+
+    trait NotImplementedTestApi extends TestApi {
+        def endpoint1: Future[String] = ???
 
         def endpoint2(pathValue: Int): Future[Int] = ???
 
         def endpoint3(p: Int): Future[String] = ???
 
         def endpoint3: Future[String] = ???
+
+        def endpoint4: Future[Option[Int]] = ???
     }
 }
