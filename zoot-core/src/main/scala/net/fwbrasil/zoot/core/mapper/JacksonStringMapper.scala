@@ -1,10 +1,9 @@
 package net.fwbrasil.zoot.core.mapper
 
 import java.lang.reflect.ParameterizedType
-import java.lang.reflect.{Type => JType}
+import java.lang.reflect.{ Type => JType }
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.collection.JavaConversions.mapAsScalaConcurrentMap
 import scala.reflect.runtime.universe._
 
 import com.fasterxml.jackson.core.`type`.TypeReference
@@ -28,10 +27,16 @@ class JacksonStringMapper(implicit mirror: Mirror) extends StringMapper {
 
     private val typeReferenceCache = new ConcurrentHashMap[TypeTag[_], TypeReference[_]]
 
-    private def typeReference[T](implicit tag: TypeTag[T]) =
-        typeReferenceCache.getOrElse(tag, new TypeReference[T] {
-            override def getType = jType(tag.tpe)
-        })
+    private def typeReference[T](implicit tag: TypeTag[T]) = {
+        var ref = typeReferenceCache.get(tag)
+        if (ref == null) {
+            ref = new TypeReference[T] {
+                override val getType = jType(tag.tpe)
+            }
+            typeReferenceCache.put(tag, ref)
+        }
+        ref
+    }
 
     private def jType(typ: Type): JType =
         synchronized {
