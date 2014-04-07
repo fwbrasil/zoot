@@ -25,7 +25,9 @@ case class FinagleServer(
     private val rootService = new Service[HttpRequest, HttpResponse] {
 
         def apply(httpRequest: HttpRequest) =
-            requestConsumer(requestFromFinagle(httpRequest)).map(responseToFinagle(_))
+            Future.successful({}).flatMap { _ =>
+                requestConsumer(requestFromFinagle(httpRequest)).map(responseToFinagle(_))
+            }
     }
 
     private val server = httpServerBuilder(rootService)

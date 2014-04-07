@@ -26,8 +26,10 @@ case class SprayServer(requestConsumer: Request => Future[Response[String]])(imp
 
         case httpRequest: HttpRequest =>
             val sender = this.sender
-            requestConsumer(requestFromSpray(httpRequest))
-                .map(responseToSpray(_)).map(sender ! _)
+            Future.successful({}).flatMap { _ =>
+                requestConsumer(requestFromSpray(httpRequest))
+                    .map(responseToSpray(_)).map(sender ! _)
+            }
     }
 
 }
