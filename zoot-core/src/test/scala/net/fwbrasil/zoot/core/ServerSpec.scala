@@ -28,7 +28,7 @@ class ServerSpec extends Spec {
                                 override def endpoint1 = Future.successful("a")
                             }
                         )(request)
-                    ) shouldBe Response("\"a\"")
+                    ) shouldBe Response("a")
                 }
                 "parametrized path" in {
                     val request = Request("/21/endpoint2", method = RequestMethod.POST)
@@ -48,7 +48,7 @@ class ServerSpec extends Spec {
                                 override def endpoint3 = Future.successful("a")
                             }
                         )(request)
-                    ) shouldBe Response("\"a\"")
+                    ) shouldBe Response("a")
                 }
                 "propagate non-ok response" in {
                     val status = ResponseStatus.BAD_REQUEST
