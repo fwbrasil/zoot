@@ -26,9 +26,11 @@ case class Server[A <: Api: Manifest](instance: A)(
         consumers.findDefined {
             _.consumeRequest(request, instance, mapper)
         }.map { future =>
-            future.map { 
+            future.map {
                 case None =>
                     Response(status = ResponseStatus.NOT_FOUND)
+                case value: String =>
+                    Response(value)
                 case value =>
                     Response(mapper.toString(value))
             }.recover {

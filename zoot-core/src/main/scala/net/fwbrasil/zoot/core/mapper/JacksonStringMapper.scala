@@ -23,12 +23,7 @@ class JacksonStringMapper(implicit mirror: Mirror) extends StringMapper {
         mapper.readValue(string, typeReference[T])
 
     def encode(value: Any) =
-        value match {
-            case value: String if (!value.startsWith("\"")) =>
-                value
-            case other =>
-                mapper.writeValueAsString(value)
-        }
+        mapper.writeValueAsString(value)
 
     private val typeReferenceCache = new ConcurrentHashMap[TypeTag[_], TypeReference[_]]
 
