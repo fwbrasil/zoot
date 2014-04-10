@@ -79,14 +79,14 @@ class RequestConsumerSpec extends Spec {
                             consumeRequest(
                                 endpointName = "endpoint5",
                                 method = RequestMethod.GET,
-                                params = Map("string" -> "\"someString\"", "int" -> "321")
+                                params = Map("string" -> "someString", "int" -> "321")
                             ) shouldBe Some(("someString", 321))
                         }
                         "use the default value" in {
                             consumeRequest(
                                 endpointName = "endpoint5",
                                 method = RequestMethod.GET,
-                                params = Map("string" -> "\"someString\"")
+                                params = Map("string" -> "someString")
                             ) shouldBe Some(("someString", 12))
                         }
                     }

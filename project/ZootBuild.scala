@@ -6,7 +6,7 @@ object ZootBuild extends Build {
     val scalaReflect = "org.scala-lang" % "scala-reflect" % "2.10.3"
     val scalaCompiler = "org.scala-lang" % "scala-compiler" % "2.10.3"
     val cglib = "cglib" % "cglib-nodep" % "3.1"
-    val smirror = "net.fwbrasil" %% "smirror" % "0.8-SNAPSHOT"
+    val smirror = "net.fwbrasil" %% "smirror" % "0.8"
     val jacksonScala = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.3.0"
     val scalaTest = "org.scalatest" %% "scalatest" % "2.0" % "test"
 
@@ -68,7 +68,7 @@ object ZootBuild extends Build {
     def commonSettings =
         Defaults.defaultSettings ++ ScoverageSbtPlugin.instrumentSettings ++ CoverallsPlugin.coverallsSettings ++ Seq(
             organization := "net.fwbrasil",
-            version := "1.0-SNAPSHOT",
+            version := "1.0-RC2",
             publishMavenStyle := true,
             scalaVersion := "2.10.3",
             parallelExecution in Test := false,
