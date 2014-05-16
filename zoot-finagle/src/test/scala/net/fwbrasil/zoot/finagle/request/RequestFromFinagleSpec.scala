@@ -1,5 +1,6 @@
 package net.fwbrasil.zoot.finagle.request
 
+import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse }
 import net.fwbrasil.zoot.finagle.Spec
 import org.jboss.netty.handler.codec.http.DefaultHttpRequest
 import org.jboss.netty.handler.codec.http.HttpVersion
@@ -11,7 +12,7 @@ class RequestFromFinagleSpec extends Spec {
 
     "apply" - {
         def test(params: String, expectedParams: Map[String, String] = Map()) = {
-            val request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, s"/path$params")
+            val request = FinagleRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, s"/path$params")
             request.addHeader("someHeader", "someValue")
             requestFromFinagle(request) shouldBe
                 Request("/path", RequestMethod.GET, expectedParams, Map("someHeader" -> "someValue"), Some(request))

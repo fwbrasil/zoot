@@ -1,15 +1,14 @@
 package net.fwbrasil.zoot.finagle.request
 
-import org.jboss.netty.handler.codec.http.DefaultHttpRequest
 import org.jboss.netty.handler.codec.http.HttpVersion
 
 import net.fwbrasil.zoot.core.request.Request
-
+import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse }
 object requestToFinagle {
 
     def apply(request: Request) = {
         val httpRequest =
-            new DefaultHttpRequest(
+            FinagleRequest(
                 HttpVersion.HTTP_1_1,
                 requestMethod.toFinagle(request.method),
                 request.path + paramsString(request))
@@ -23,7 +22,7 @@ object requestToFinagle {
                 k + '=' + v
         } mkString ("?", "&", "")
 
-    private def addHeaders(request: Request, httpRequest: DefaultHttpRequest) =
+    private def addHeaders(request: Request, httpRequest: FinagleRequest) =
         for ((key, value) <- request.headers)
-            httpRequest.addHeader(key, value)
+            httpRequest.headers().add(key, value)
 }

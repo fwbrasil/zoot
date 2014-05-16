@@ -183,7 +183,7 @@ implicit val mirror = scala.reflect.runtime.currentMirror
 implicit val mapper = new JacksonStringMapper
 
 val builder = ClientBuilder()
-    .codec(Http())
+    .codec(RichHttp[Request](Http()))
     .hosts(s"$host:$port")
     .hostConnectionLimit(10)
     .requestTimeout(1000 millis)
@@ -201,7 +201,7 @@ implicit val mapper = new JacksonStringMapper
 val address = new InetSocketAddress(port)
 val builder =
     ServerBuilder()
-        .codec(Http())
+        .codec(RichHttp[Request](Http()))
         .bindTo(address)
         .keepAlive(true)
         .name("SomeServer")

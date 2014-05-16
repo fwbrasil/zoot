@@ -1,5 +1,6 @@
 package net.fwbrasil.zoot.finagle
 
+import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse }
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
@@ -14,7 +15,7 @@ import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.finagle.request.requestToFinagle
 import net.fwbrasil.zoot.finagle.response.responseFromFinagle
 
-case class FinagleClient(httpService: Service[HttpRequest, HttpResponse])(implicit ctx: ExecutionContext)
+case class FinagleClient(httpService: Service[FinagleRequest, FinagleResponse])(implicit ctx: ExecutionContext)
     extends (Request => Future[Response[String]]) {
 
     def apply(request: Request) =

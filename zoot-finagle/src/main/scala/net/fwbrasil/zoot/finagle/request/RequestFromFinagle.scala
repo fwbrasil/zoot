@@ -4,12 +4,12 @@ import scala.Array.canBuildFrom
 import scala.collection.JavaConversions.asScalaBuffer
 
 import org.jboss.netty.handler.codec.http.HttpRequest
-
+import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse }
 import net.fwbrasil.zoot.core.request.Request
 
 object requestFromFinagle {
 
-    def apply(httpRequest: HttpRequest) = {
+    def apply(httpRequest: FinagleRequest) = {
         val (path, params) = parseUri(httpRequest)
         Request(
             path,

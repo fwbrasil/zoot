@@ -10,6 +10,8 @@ import net.fwbrasil.zoot.core._
 import net.fwbrasil.zoot.core.mapper.JacksonStringMapper
 import com.twitter.finagle.builder.ServerBuilder
 import java.net.InetSocketAddress
+import com.twitter.finagle.http.RichHttp
+import com.twitter.finagle.http.Request
 
 trait TestApi extends Api {
     @endpoint(path = "/path")
@@ -30,14 +32,14 @@ class FinagleIntegrationTest extends Spec {
 
     val clientBuilder =
         ClientBuilder()
-            .codec(Http())
+            .codec(RichHttp[Request](Http()))
             .hosts(s"$host:$port")
             .hostConnectionLimit(10)
             .requestTimeout(1000 millis)
 
     val serverBuilder =
         ServerBuilder()
-            .codec(Http())
+            .codec(RichHttp[Request](Http()))
             .bindTo(new InetSocketAddress(port))
             .keepAlive(true)
             .name("SomeServer")
