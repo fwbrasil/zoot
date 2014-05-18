@@ -62,6 +62,17 @@ class ServerSpec extends Spec {
                         )(request)
                     ) shouldBe ExceptionResponse(description, status)
                 }
+                "return response string" in {
+                    val request = Request("/endpoint5")
+                    val response = Response("test")
+                    await(
+                        server(
+                            new NotImplementedTestApi {
+                                override def endpoint5 = Future.successful(response)
+                            }
+                        )(request)
+                    ) shouldBe response
+                }
                 "return not found for None" in {
                     val request = Request("/endpoint4")
                     await(
@@ -110,6 +121,9 @@ class ServerSpec extends Spec {
 
         @endpoint(method = RequestMethod.GET, path = "/endpoint4")
         def endpoint4: Future[Option[Int]]
+        
+        @endpoint(method = RequestMethod.GET, path = "/endpoint5")
+        def endpoint5: Future[Response[String]]
     }
 
     trait NotImplementedTestApi extends TestApi {
@@ -122,5 +136,7 @@ class ServerSpec extends Spec {
         def endpoint3: Future[String] = ???
 
         def endpoint4: Future[Option[Int]] = ???
+        
+        def endpoint5: Future[Response[String]] = ???
     }
 }

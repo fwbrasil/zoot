@@ -15,51 +15,6 @@ class RequestProducerSpec extends Spec {
     implicit val mirror = scala.reflect.runtime.currentMirror
 
     "RequestProducer" - {
-        "payloadTypeTag" - {
-            "boolean" in {
-                val equals =
-                    uniqueEndpointProducer[TestApi1].payloadTypeTag.tpe =:=
-                        typeTag[Boolean].tpe
-                equals shouldBe true
-            }
-            "option boolean" in {
-                val equals =
-                    uniqueEndpointProducer[TestApi2].payloadTypeTag.tpe =:=
-                        typeTag[Option[Boolean]].tpe
-                equals shouldBe true
-            }
-            "case class" in {
-                uniqueEndpointProducer[TestApi3].payloadTypeTag shouldBe
-                    typeTag[Test]
-            }
-            "option case class" in {
-                val equals =
-                    uniqueEndpointProducer[TestApi4].payloadTypeTag.tpe =:=
-                        typeTag[Option[Test]].tpe
-                equals shouldBe true
-            }
-        }
-        "payloadIsResponse" - {
-            "true" in {
-                uniqueEndpointProducer[TestApi8].payloadIsResponse shouldBe true
-            }
-            "false" in {
-                uniqueEndpointProducer[TestApi7].payloadIsResponse shouldBe false
-            }
-        }
-        "payloadIsResponseString" - {
-            "true" in {
-                uniqueEndpointProducer[TestApi8].payloadIsResponseString shouldBe true
-            }
-            "false" - {
-                "not response" in {
-                    uniqueEndpointProducer[TestApi7].payloadIsResponse shouldBe false
-                }
-                "not response string" in {
-                    uniqueEndpointProducer[TestApi9].payloadIsResponseString shouldBe false
-                }
-            }
-        }
         "javaMethod" in {
             uniqueEndpointProducer[TestApi5].javaMethod shouldBe
                 classOf[TestApi5].getMethod("goodendpoint")
@@ -91,26 +46,6 @@ class RequestProducerSpec extends Spec {
                             headers = Map("Content-Type" -> mapper.contentType))
             }
         }
-    }
-
-    trait TestApi1 extends Api {
-        @endpoint(path = "/path")
-        def goodendpoint: Future[Boolean]
-    }
-
-    trait TestApi2 extends Api {
-        @endpoint(path = "/path")
-        def goodendpoint: Future[Option[Boolean]]
-    }
-
-    trait TestApi3 extends Api {
-        @endpoint(path = "/path")
-        def goodendpoint: Future[Test]
-    }
-
-    trait TestApi4 extends Api {
-        @endpoint(path = "/path")
-        def goodendpoint: Future[Option[Test]]
     }
 
     trait TestApi5 extends Api {

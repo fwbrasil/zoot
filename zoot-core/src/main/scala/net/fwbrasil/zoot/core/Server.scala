@@ -23,19 +23,21 @@ case class Server[A <: Api: Manifest](instance: A)(
     val consumers = Endpoint.listFor[A].map(new RequestConsumer(_))
 
     def apply(request: Request) =
-        consumers.findDefined {
-            _.consumeRequest(request, instance, mapper)
-        }.map { future =>
-            future.map {
-                case None =>
-                    Response(status = ResponseStatus.NOT_FOUND)
-                case value: String =>
-                    Response(value)
-                case value =>
-                    Response(mapper.toString(value))
-            }.recover {
-                case response: ExceptionResponse[_] =>
-                    response.asInstanceOf[ExceptionResponse[String]]
+        consumers.findDefined { consumer =>
+            consumer.consumeRequest(request, instance, mapper).map {
+                _.map {
+                    case response: Response[_] if consumer.endpoint.payloadIsResponseString =>
+                        response.asInstanceOf[Response[String]]
+                    case None =>
+                        Response(status = ResponseStatus.NOT_FOUND)
+                    case value: String =>
+                        Response(value)
+                    case value =>
+                        Response(mapper.toString(value))
+                }.recover {
+                    case response: ExceptionResponse[_] =>
+                        response.asInstanceOf[ExceptionResponse[String]]
+                }
             }
         }.getOrElse {
             Future.successful(Response(status = ResponseStatus.NOT_FOUND))

@@ -35,18 +35,18 @@ object Client {
             (method, args) =>
                 producerByJavaMethod.get(method).map { producer =>
                     dispatcher(producer.produceRequest(args.toList, mapper)).map {
-                        case response if (producer.payloadIsOption && response.status == ResponseStatus.NOT_FOUND) =>
+                        case response if (producer.endpoint.payloadIsOption && response.status == ResponseStatus.NOT_FOUND) =>
                             None
-                        case response if (producer.payloadIsOption && response.status != ResponseStatus.NOT_FOUND) =>
-                            Option(mapper.fromString(response.body)(producer.payloadOptionType.get))
-                        case response if (producer.payloadIsResponseString) =>
+                        case response if (producer.endpoint.payloadIsOption && response.status != ResponseStatus.NOT_FOUND) =>
+                            Option(mapper.fromString(response.body)(producer.endpoint.payloadOptionType.get))
+                        case response if (producer.endpoint.payloadIsResponseString) =>
                             response
-                        case response: NormalResponse[_] if (producer.payloadIsResponse) =>
+                        case response: NormalResponse[_] if (producer.endpoint.payloadIsResponse) =>
                             response.copy(body = mapper.fromString(response.body)(bodyTypeTag(mirror, producer)))
-                        case response: ExceptionResponse[_] if (producer.payloadIsResponse) =>
+                        case response: ExceptionResponse[_] if (producer.endpoint.payloadIsResponse) =>
                             response.copy(body = mapper.fromString(response.body)(bodyTypeTag(mirror, producer)))
                         case response if (response.status == ResponseStatus.OK) =>
-                            mapper.fromString(response.body)(producer.payloadTypeTag)
+                            mapper.fromString(response.body)(producer.endpoint.payloadTypeTag)
                         case response =>
                             throw new ExceptionResponse(response.body, response.status, response.headers)
                     }
@@ -57,7 +57,7 @@ object Client {
     private def bodyTypeTag(pMirror: Mirror, producer: RequestProducer[_]) =
         new TypeTag[Any] {
             override def in[U <: scala.reflect.api.Universe with Singleton](otherMirror: scala.reflect.api.Mirror[U]): U#TypeTag[Any] = ???
-            def tpe = producer.payloadTypeTag.tpe.asInstanceOf[TypeRef].args.head
+            def tpe = producer.endpoint.payloadTypeTag.tpe.asInstanceOf[TypeRef].args.head
             val mirror = pMirror
         }
 }

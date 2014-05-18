@@ -1,20 +1,53 @@
 package net.fwbrasil.zoot.core.endpoint
 
 import scala.concurrent.Future
-import scala.reflect.runtime.universe._
+import scala.reflect.api.Universe
+import scala.reflect.runtime.universe
+import scala.reflect.runtime.universe.Mirror
+import scala.reflect.runtime.universe.TypeRefApi
+import scala.reflect.runtime.universe.typeOf
 
-import net.fwbrasil.smirror._
+import net.fwbrasil.smirror.SMethod
+import net.fwbrasil.smirror.sClassOf
 import net.fwbrasil.zoot.core.Api
 import net.fwbrasil.zoot.core.api.EndpointAnnotation
+import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
+import scala.reflect.runtime.universe._
 
 case class Endpoint[A <: Api](
     template: EndpointTemplate,
     sMethod: SMethod[A])(
         implicit mirror: Mirror) {
-
+    
     require(sMethod.returnType == sClassOf[Future[_]],
         s"Endpoint method '${sMethod.name}' should return scala.concurrent.Future.")
+
+    val payloadTypeTag =
+        sMethod.typeTagArguments.onlyOne
+
+    val payloadIsResponse =
+        payloadTypeTag.tpe.erasure =:= typeOf[Response[_]]
+
+    val payloadIsResponseString =
+        payloadTypeTag.tpe <:< typeOf[Response[String]]
+
+    val payloadIsOption =
+        payloadTypeTag.tpe.erasure <:< typeOf[Option[_]]
+
+    val payloadOptionType =
+        payloadTypeTag.tpe match {
+            case tp: TypeRefApi =>
+                tp.args.headOption.map { typ =>
+                    new TypeTag[Any] {
+                        override def in[U <: Universe with Singleton](otherMirror: scala.reflect.api.Mirror[U]): U#TypeTag[Any] = ???
+                        val mirror = sMethod.runtimeMirror
+                        def tpe = typ
+                    }
+                }
+            case other =>
+                None
+        }
 }
 
 object Endpoint {

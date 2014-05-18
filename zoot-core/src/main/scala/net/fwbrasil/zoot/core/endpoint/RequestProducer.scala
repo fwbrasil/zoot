@@ -15,32 +15,6 @@ case class RequestProducer[A <: Api](endpoint: Endpoint[A]) {
 
     import endpoint._
 
-    val payloadTypeTag =
-        sMethod.typeTagArguments.onlyOne
-
-    val payloadIsResponse =
-        payloadTypeTag.tpe.erasure =:= typeOf[Response[_]]
-
-    val payloadIsResponseString =
-        payloadTypeTag.tpe <:< typeOf[Response[String]]
-
-    val payloadIsOption =
-        payloadTypeTag.tpe.erasure <:< typeOf[Option[_]]
-
-    val payloadOptionType =
-        payloadTypeTag.tpe match {
-            case tp: TypeRefApi =>
-                tp.args.headOption.map { typ =>
-                    new TypeTag[Any] {
-                        override def in[U <: Universe with Singleton](otherMirror: Mirror[U]): U#TypeTag[Any] = ???
-                        val mirror = sMethod.runtimeMirror
-                        def tpe = typ
-                    }
-                }
-            case other =>
-                None
-        }
-
     val javaMethod =
         sMethod.javaMethodOption
             .getOrElse(throw new IllegalStateException(s"Can't find the java method for $sMethod."))

@@ -1,5 +1,6 @@
 package net.fwbrasil.zoot.core.endpoint
 
+import scala.reflect.runtime.universe._
 import scala.concurrent.Future
 import scala.reflect.runtime.universe
 import net.fwbrasil.smirror.sClassOf
@@ -7,6 +8,7 @@ import net.fwbrasil.zoot.core.Api
 import net.fwbrasil.zoot.core.request.RequestMethod
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.Spec
+import net.fwbrasil.zoot.core.response.Response
 
 class EndpointSpec extends Spec {
 
@@ -65,7 +67,51 @@ class EndpointSpec extends Spec {
                 }
             }
         }
-
+        "payloadTypeTag" - {
+            "boolean" in {
+                val equals =
+                    uniqueEndpoint[TestApi8].payloadTypeTag.tpe =:=
+                        typeTag[Boolean].tpe
+                equals shouldBe true
+            }
+            "option boolean" in {
+                val equals =
+                    uniqueEndpoint[TestApi9].payloadTypeTag.tpe =:=
+                        typeTag[Option[Boolean]].tpe
+                equals shouldBe true
+            }
+            "case class" in {
+                uniqueEndpoint[TestApi10].payloadTypeTag shouldBe
+                    typeTag[Test]
+            }
+            "option case class" in {
+                val equals =
+                    uniqueEndpoint[TestApi11].payloadTypeTag.tpe =:=
+                        typeTag[Option[Test]].tpe
+                equals shouldBe true
+            }
+        }
+        "payloadIsResponse" - {
+            "true" in {
+                uniqueEndpoint[TestApi13].payloadIsResponse shouldBe true
+            }
+            "false" in {
+                uniqueEndpoint[TestApi12].payloadIsResponse shouldBe false
+            }
+        }
+        "payloadIsResponseString" - {
+            "true" in {
+                uniqueEndpoint[TestApi13].payloadIsResponseString shouldBe true
+            }
+            "false" - {
+                "not response" in {
+                    uniqueEndpoint[TestApi12].payloadIsResponse shouldBe false
+                }
+                "not response string" in {
+                    uniqueEndpoint[TestApi14].payloadIsResponseString shouldBe false
+                }
+            }
+        }
     }
 
     trait TestApi1 extends Api {
@@ -104,12 +150,49 @@ class EndpointSpec extends Spec {
         @endpoint(method = RequestMethod.GET, path = "/endpoint")
         def endpoint(a: String = "a") = Future.successful(a)
     }
-    
+
     trait TestApi7 extends Api {
         @endpoint(method = RequestMethod.GET, path = "/endpoint")
         def endpoint(a: String = "a"): Future[String]
-        
+
         def wrong: Boolean
     }
 
+    trait TestApi8 extends Api {
+        @endpoint(path = "/path")
+        def goodendpoint: Future[Boolean]
+    }
+
+    trait TestApi9 extends Api {
+        @endpoint(path = "/path")
+        def goodendpoint: Future[Option[Boolean]]
+    }
+
+    trait TestApi10 extends Api {
+        @endpoint(path = "/path")
+        def goodendpoint: Future[Test]
+    }
+
+    trait TestApi11 extends Api {
+        @endpoint(path = "/path")
+        def goodendpoint: Future[Option[Test]]
+    }
+
+    trait TestApi12 extends Api {
+        @endpoint(method = RequestMethod.POST, path = "/endpoint2/:pathParam/")
+        def endpoint2(pathParam: Int, param: String): Future[(Int, String)]
+    }
+
+    trait TestApi13 extends Api {
+        @endpoint(path = "/path")
+        def goodendpoint: Future[Response[String]]
+    }
+
+    trait TestApi14 extends Api {
+        @endpoint(path = "/path")
+        def goodendpoint: Future[Response[Int]]
+    }
+
+    private def uniqueEndpoint[A <: Api: TypeTag] =
+        Endpoint.listFor[A].onlyOne
 }
