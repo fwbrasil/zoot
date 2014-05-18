@@ -11,7 +11,7 @@ import net.fwbrasil.zoot.core.response.Response
 object responseFromFinagle {
 
     def apply(httpResponse: HttpResponse) = {
-        val body = httpResponse.getContent.toString(Charset.defaultCharset)
+        val body = httpResponse.getContent.array
         val status = responseStatus.fromFinagle(httpResponse.getStatus)
         val headers = headersMap(httpResponse)
         Response(body, status, headers)

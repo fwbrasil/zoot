@@ -7,12 +7,12 @@ import spray.http.HttpHeaders._
 
 object responseToSpray {
 
-    def apply(response: Response[String]) = {
+    def apply(response: Response[Array[Byte]]) = {
         val status = responseStatus.toSpray(response.status)
         HttpResponse(status, response.body, headers(response).toList)
     }
 
-    private def headers(response: Response[String]) = {
+    private def headers(response: Response[Array[Byte]]) = {
         for ((name, value) <- response.headers) yield {
             new RawHeader(name, value)
         }

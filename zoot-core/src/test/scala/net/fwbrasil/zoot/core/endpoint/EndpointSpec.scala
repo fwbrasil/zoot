@@ -101,14 +101,14 @@ class EndpointSpec extends Spec {
         }
         "payloadIsResponseString" - {
             "true" in {
-                uniqueEndpoint[TestApi13].payloadIsResponseString shouldBe true
+                uniqueEndpoint[TestApi13].payloadIsResponseByteArray shouldBe true
             }
             "false" - {
                 "not response" in {
                     uniqueEndpoint[TestApi12].payloadIsResponse shouldBe false
                 }
                 "not response string" in {
-                    uniqueEndpoint[TestApi14].payloadIsResponseString shouldBe false
+                    uniqueEndpoint[TestApi14].payloadIsResponseByteArray shouldBe false
                 }
             }
         }
@@ -185,7 +185,7 @@ class EndpointSpec extends Spec {
 
     trait TestApi13 extends Api {
         @endpoint(path = "/path")
-        def goodendpoint: Future[Response[String]]
+        def goodendpoint: Future[Response[Array[Byte]]]
     }
 
     trait TestApi14 extends Api {

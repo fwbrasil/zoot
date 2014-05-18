@@ -4,7 +4,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe.Mirror
-
 import net.fwbrasil.zoot.core.endpoint.Endpoint
 import net.fwbrasil.zoot.core.endpoint.RequestConsumer
 import net.fwbrasil.zoot.core.mapper.StringMapper
@@ -13,12 +12,16 @@ import net.fwbrasil.zoot.core.response.ExceptionResponse
 import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.response.ResponseStatus
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
+import java.nio.charset.Charset
+import net.fwbrasil.zoot.core.response.ExceptionResponse
+import net.fwbrasil.zoot.core.response.ExceptionResponse
 
 case class Server[A <: Api: Manifest](instance: A)(
     implicit mapper: StringMapper,
     exctx: ExecutionContext,
-    mirror: Mirror)
-    extends (Request => Future[Response[String]]) {
+    mirror: Mirror,
+    charset: Charset = Charset.defaultCharset)
+    extends (Request => Future[Response[Array[Byte]]]) {
 
     val consumers = Endpoint.listFor[A].map(new RequestConsumer(_))
 
@@ -26,20 +29,22 @@ case class Server[A <: Api: Manifest](instance: A)(
         consumers.findDefined { consumer =>
             consumer.consumeRequest(request, instance, mapper).map {
                 _.map {
-                    case response: Response[_] if consumer.endpoint.payloadIsResponseString =>
-                        response.asInstanceOf[Response[String]]
+                    case response: Response[_] if consumer.endpoint.payloadIsResponseByteArray =>
+                        response.asInstanceOf[Response[Array[Byte]]]
                     case None =>
-                        Response(status = ResponseStatus.NOT_FOUND)
+                        Response(body = Array[Byte](), status = ResponseStatus.NOT_FOUND)
                     case value: String =>
-                        Response(value)
+                        Response(value.getBytes(charset))
                     case value =>
-                        Response(mapper.toString(value))
+                        Response(mapper.toString(value).getBytes(charset))
                 }.recover {
-                    case response: ExceptionResponse[_] =>
-                        response.asInstanceOf[ExceptionResponse[String]]
+                    case response @ ExceptionResponse(body: Array[Byte], status, headers) =>
+                        ExceptionResponse(body, status, headers)
+                    case response @ ExceptionResponse(body: String, status, headers) =>
+                        ExceptionResponse(body.getBytes(charset), status, headers)
                 }
             }
         }.getOrElse {
-            Future.successful(Response(status = ResponseStatus.NOT_FOUND))
+            Future.successful(Response(body = Array[Byte](), status = ResponseStatus.NOT_FOUND))
         }
 }

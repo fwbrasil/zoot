@@ -22,13 +22,13 @@ class ServerSpec extends Spec {
             "match" - {
                 "static path" in {
                     val request = Request("/endpoint1/")
-                    await(
+                    val a = await(
                         server(
                             new NotImplementedTestApi {
                                 override def endpoint1 = Future.successful("a")
                             }
                         )(request)
-                    ) shouldBe Response("a")
+                    ).body.toList shouldBe "a".getBytes.toList
                 }
                 "parametrized path" in {
                     val request = Request("/21/endpoint2", method = RequestMethod.POST)
@@ -38,7 +38,7 @@ class ServerSpec extends Spec {
                                 override def endpoint2(pathValue: Int) = Future.successful(pathValue)
                             }
                         )(request)
-                    ) shouldBe Response("21")
+                    ).body.toList shouldBe "21".getBytes.toList
                 }
                 "use the last endpoint that matches" in {
                     val request = Request("/endpoint3/")
@@ -48,23 +48,25 @@ class ServerSpec extends Spec {
                                 override def endpoint3 = Future.successful("a")
                             }
                         )(request)
-                    ) shouldBe Response("a")
+                    ).body.toList shouldBe "a".getBytes.toList
                 }
                 "propagate non-ok response" in {
                     val status = ResponseStatus.BAD_REQUEST
                     val description = "Bad parameter"
                     val request = Request("/endpoint3/")
-                    await(
+                    val response = await(
                         server(
                             new NotImplementedTestApi {
                                 override def endpoint3 = throw new ExceptionResponse(description, status)
                             }
                         )(request)
-                    ) shouldBe ExceptionResponse(description, status)
+                    )
+                    response.status shouldBe status
+                    new String(response.body) shouldBe description
                 }
-                "return response string" in {
+                "return response byte array" in {
                     val request = Request("/endpoint5")
-                    val response = Response("test")
+                    val response = Response("test".getBytes)
                     await(
                         server(
                             new NotImplementedTestApi {
@@ -81,7 +83,7 @@ class ServerSpec extends Spec {
                                 override def endpoint4 = Future.successful(None)
                             }
                         )(request)
-                    ) shouldBe Response(status = ResponseStatus.NOT_FOUND)
+                    ).status shouldBe ResponseStatus.NOT_FOUND
                 }
                 "return the value for Some" in {
                     val request = Request("/endpoint4")
@@ -91,14 +93,14 @@ class ServerSpec extends Spec {
                                 override def endpoint4 = Future.successful(Some(1))
                             }
                         )(request)
-                    ) shouldBe Response("1")
+                    ).body.toList shouldBe "1".getBytes.toList
                 }
             }
             "mismatch" in {
                 val request = Request("/invalid/", method = RequestMethod.POST)
                 await(
                     server(new NotImplementedTestApi {})(request)
-                ) shouldBe Response(status = ResponseStatus.NOT_FOUND)
+                ).status shouldBe ResponseStatus.NOT_FOUND
             }
         }
     }
@@ -123,7 +125,7 @@ class ServerSpec extends Spec {
         def endpoint4: Future[Option[Int]]
         
         @endpoint(method = RequestMethod.GET, path = "/endpoint5")
-        def endpoint5: Future[Response[String]]
+        def endpoint5: Future[Response[Array[Byte]]]
     }
 
     trait NotImplementedTestApi extends TestApi {
@@ -137,6 +139,6 @@ class ServerSpec extends Spec {
 
         def endpoint4: Future[Option[Int]] = ???
         
-        def endpoint5: Future[Response[String]] = ???
+        def endpoint5: Future[Response[Array[Byte]]] = ???
     }
 }

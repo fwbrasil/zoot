@@ -4,7 +4,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
-
 import net.fwbrasil.zoot.core.endpoint.Endpoint
 import net.fwbrasil.zoot.core.endpoint.RequestProducer
 import net.fwbrasil.zoot.core.mapper.StringMapper
@@ -16,11 +15,13 @@ import net.fwbrasil.zoot.core.response.ResponseStatus
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.util.Stub
 import scala.reflect.runtime.universe._
+import java.nio.charset.Charset
 
 object Client {
 
     def apply[A <: Api: ClassTag](
-        dispatcher: Request => Future[Response[String]])(
+        dispatcher: Request => Future[Response[Array[Byte]]],
+        charset: Charset = Charset.defaultCharset)(
             implicit apiTag: TypeTag[A],
             mirror: Mirror,
             mapper: StringMapper,
@@ -31,6 +32,9 @@ object Client {
                 .map(new RequestProducer(_))
                 .groupByUnique(_.javaMethod)
 
+        def string(bytes: Array[Byte]) =
+            new String(bytes, charset)
+
         Stub[A] {
             (method, args) =>
                 producerByJavaMethod.get(method).map { producer =>
@@ -38,15 +42,15 @@ object Client {
                         case response if (producer.endpoint.payloadIsOption && response.status == ResponseStatus.NOT_FOUND) =>
                             None
                         case response if (producer.endpoint.payloadIsOption && response.status != ResponseStatus.NOT_FOUND) =>
-                            Option(mapper.fromString(response.body)(producer.endpoint.payloadOptionType.get))
-                        case response if (producer.endpoint.payloadIsResponseString) =>
+                            Option(mapper.fromString(string(response.body))(producer.endpoint.payloadOptionType.get))
+                        case response if (producer.endpoint.payloadIsResponseByteArray) =>
                             response
                         case response: NormalResponse[_] if (producer.endpoint.payloadIsResponse) =>
-                            response.copy(body = mapper.fromString(response.body)(bodyTypeTag(mirror, producer)))
+                            response.copy(body = mapper.fromString(string(response.body))(bodyTypeTag(mirror, producer)))
                         case response: ExceptionResponse[_] if (producer.endpoint.payloadIsResponse) =>
-                            response.copy(body = mapper.fromString(response.body)(bodyTypeTag(mirror, producer)))
+                            response.copy(body = mapper.fromString(string(response.body))(bodyTypeTag(mirror, producer)))
                         case response if (response.status == ResponseStatus.OK) =>
-                            mapper.fromString(response.body)(producer.endpoint.payloadTypeTag)
+                            mapper.fromString(string(response.body))(producer.endpoint.payloadTypeTag)
                         case response =>
                             throw new ExceptionResponse(response.body, response.status, response.headers)
                     }

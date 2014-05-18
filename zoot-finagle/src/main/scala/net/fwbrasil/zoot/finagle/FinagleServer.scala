@@ -17,7 +17,7 @@ import net.fwbrasil.zoot.finagle.response.responseToFinagle
 import com.twitter.finagle.http.{Request => FinagleRequest, Response => FinagleResponse }
 
 case class FinagleServer(
-    requestConsumer: Request => Future[Response[String]],
+    requestConsumer: Request => Future[Response[Array[Byte]]],
     httpServerBuilder: Service[FinagleRequest, FinagleResponse] => Server)(implicit ctx: ExecutionContext) {
 
     private val rootService = new Service[FinagleRequest, FinagleResponse] {

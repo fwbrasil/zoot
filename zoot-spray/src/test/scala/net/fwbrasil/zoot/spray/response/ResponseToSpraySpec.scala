@@ -11,7 +11,7 @@ class ResponseToSpraySpec extends Spec {
 
     "apply" in {
         val body = "body"
-        val response = Response(body, ResponseStatus.CONFLICT, Map("someHeader" -> "someValue"))
+        val response = Response(body.getBytes, ResponseStatus.CONFLICT, Map("someHeader" -> "someValue"))
         val spray = responseToSpray(response)
         spray.status shouldBe StatusCodes.Conflict
         spray.entity.asString shouldBe body

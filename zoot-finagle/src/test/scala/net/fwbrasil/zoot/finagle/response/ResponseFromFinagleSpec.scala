@@ -16,7 +16,9 @@ class ResponseFromFinagleSpec extends Spec {
         response.setContentString(body)
         response.addHeader("someHeader", "someValue")
 
-        responseFromFinagle(response) shouldBe
-            Response(body, ResponseStatus.OK, Map("someHeader" -> "someValue"))
+        val finagle = responseFromFinagle(response)
+        finagle.body.toList shouldBe body.getBytes.toList
+        finagle.status shouldBe ResponseStatus.OK
+        finagle.headers shouldBe Map("someHeader" -> "someValue") 
     }
 }

@@ -10,7 +10,7 @@ import org.scalatest.OneInstancePerTest
 class FilterSpec extends Spec with OneInstancePerTest {
 
     val execution = ListBuffer[String]()
-    val response = Response(body = "test")
+    val response = Response(body = "test".getBytes)
 
     val service = (i: Request) => Future.successful {
         execution += "service"

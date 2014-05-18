@@ -48,6 +48,7 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A])(implicit mirror: Mir
     private def paramValues(getParam: String => Option[String], instance: A, mapper: StringMapper) =
         parameters.zipWith { param =>
             getParam(param.name)
+                .map(URLDecoder.decode)
                 .map(readParam(param, _, mapper))
                 .orElse(param.defaultValueMethodOption.map(_.invoke(instance)))
         }
@@ -58,7 +59,7 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A])(implicit mirror: Mir
         if (param.sClass == stringSClass)
             value
         else
-            try mapper.fromString(URLDecoder.decode(value))(param.typeTag)
+            try mapper.fromString(value)(param.typeTag)
             catch {
                 case e: Exception =>
                     throw ExceptionResponse(s"Invalid value $value for parameter $param.", ResponseStatus.BAD_REQUEST)

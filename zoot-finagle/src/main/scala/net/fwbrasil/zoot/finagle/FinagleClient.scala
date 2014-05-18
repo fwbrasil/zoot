@@ -16,7 +16,7 @@ import net.fwbrasil.zoot.finagle.request.requestToFinagle
 import net.fwbrasil.zoot.finagle.response.responseFromFinagle
 
 case class FinagleClient(httpService: Service[FinagleRequest, FinagleResponse])(implicit ctx: ExecutionContext)
-    extends (Request => Future[Response[String]]) {
+    extends (Request => Future[Response[Array[Byte]]]) {
 
     def apply(request: Request) =
         httpService(requestToFinagle(request))

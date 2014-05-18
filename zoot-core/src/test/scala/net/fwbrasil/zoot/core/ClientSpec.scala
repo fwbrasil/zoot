@@ -22,7 +22,7 @@ class ClientSpec extends Spec {
             val client =
                 Client[TestApi] { request =>
                     request shouldBe Request("/endpoint1/", headers = Map("Content-Type" -> mapper.contentType))
-                    Future.successful(Response("\"a\""))
+                    Future.successful(Response("\"a\"".getBytes))
                 }
             await(client.endpoint1) shouldBe "a"
         }
@@ -30,7 +30,7 @@ class ClientSpec extends Spec {
             val client =
                 Client[TestApi] { request =>
                     request shouldBe Request("/12/endpoint2/", method = RequestMethod.POST, params = Map("pathValue" -> "12"), headers = Map("Content-Type" -> mapper.contentType))
-                    Future.successful(Response("34"))
+                    Future.successful(Response("34".getBytes))
                 }
             await(client.endpoint2(12)) shouldBe 34
         }
@@ -39,28 +39,28 @@ class ClientSpec extends Spec {
             val description = "some resource not found"
             val client =
                 Client[TestApi] { _ =>
-                    Future.successful(Response(description, status))
+                    Future.successful(Response(description.getBytes, status))
                 }
             val exception =
-                intercept[ExceptionResponse[_]] {
+                intercept[ExceptionResponse[Array[Byte]]] {
                     await(client.endpoint1)
                 }
             exception.status shouldBe status
-            exception.body shouldBe description
+            new String(exception.body) shouldBe description
         }
 
         "with option return" - {
             "None for not found" in {
                 val client =
                     Client[TestApi] { _ =>
-                        Future.successful(Response(status = ResponseStatus.NOT_FOUND))
+                        Future.successful(Response(body = Array(), status = ResponseStatus.NOT_FOUND))
                     }
                 await(client.endpoint5) shouldBe None
             }
             "Some for ok" in {
                 val client =
                     Client[TestApi] { _ =>
-                        Future.successful(Response("1"))
+                        Future.successful(Response("1".getBytes))
                     }
                 await(client.endpoint5) shouldBe Some(1)
             }
@@ -70,23 +70,25 @@ class ClientSpec extends Spec {
 
             "Response[String]" - {
 
-                def test(response: Response[String]) = {
+                def test(response: Response[Array[Byte]]) = {
                     val client =
                         Client[TestApi] { request =>
                             Future.successful(response)
                         }
-                    await(client.endpoint3) shouldBe response
+                    val actual = await(client.endpoint3)
+                    actual.body.toList shouldBe response.body.toList
+                    actual.status shouldBe response.status
                 }
 
-                "ok" in test(Response())
-                "nok" in test(Response(status = ResponseStatus.BAD_GATEWAY))
+                "ok" in test(Response(body = Array()))
+                "nok" in test(Response(body = Array(), status = ResponseStatus.BAD_GATEWAY))
             }
 
             "Response[CaseClass]" - {
                 def test(response: NormalResponse[Any]) = {
                     val client =
                         Client[TestApi] { request =>
-                            Future.successful(response.copy(body = mapper.toString(response.body)))
+                            Future.successful(response.copy(body = mapper.toString(response.body).getBytes))
                         }
                     await(client.endpoint4) shouldBe response
                 }

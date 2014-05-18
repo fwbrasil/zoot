@@ -29,8 +29,8 @@ case class Endpoint[A <: Api](
     val payloadIsResponse =
         payloadTypeTag.tpe.erasure =:= typeOf[Response[_]]
 
-    val payloadIsResponseString =
-        payloadTypeTag.tpe <:< typeOf[Response[String]]
+    val payloadIsResponseByteArray =
+        payloadTypeTag.tpe <:< typeOf[Response[Array[Byte]]]
 
     val payloadIsOption =
         payloadTypeTag.tpe.erasure <:< typeOf[Option[_]]

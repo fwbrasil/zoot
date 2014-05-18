@@ -14,7 +14,7 @@ import spray.http.HttpRequest
 import spray.http.HttpResponse
 import spray.http.StatusCodes
 
-case class SprayServer(requestConsumer: Request => Future[Response[String]])(implicit timeout: Timeout)
+case class SprayServer(requestConsumer: Request => Future[Response[Array[Byte]]])(implicit timeout: Timeout)
     extends Actor {
 
     import context.dispatcher

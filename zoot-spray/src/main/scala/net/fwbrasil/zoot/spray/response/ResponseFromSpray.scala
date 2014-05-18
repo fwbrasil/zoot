@@ -6,7 +6,7 @@ import spray.http.HttpResponse
 object responseFromSpray {
 
     def apply(response: HttpResponse) = {
-        val body = response.entity.asString
+        val body = response.entity.data.toByteArray
         val status = responseStatus.fromSpray(response.status)
         val headers = headersMap(response)
         Response(body, status, headers)

@@ -16,7 +16,7 @@ import spray.can.Http
 import spray.http.HttpResponse
 
 case class SprayClient(host: String, port: Int)(implicit system: ActorSystem, timeout: Timeout)
-    extends (Request => Future[Response[String]]) {
+    extends (Request => Future[Response[Array[Byte]]]) {
 
     import system.dispatcher
 
