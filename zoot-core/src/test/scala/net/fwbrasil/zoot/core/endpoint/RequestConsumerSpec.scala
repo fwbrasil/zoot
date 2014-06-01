@@ -193,16 +193,16 @@ class RequestConsumerSpec extends Spec {
         def endpoint7(pathParam: String) = Future.successful(pathParam)
     }
 
-    def consumeRequest(endpointName: String, method: RequestMethod, path: String, params: Map[String, String] = Map()): Option[Any] =
+    def consumeRequest(endpointName: String, method: String, path: String, params: Map[String, String] = Map()): Option[Any] =
         Endpoint.listFor[TestApi]
             .find(_.sMethod.name == endpointName).map(RequestConsumer(_)).get
             .consumeRequest(Request(path, method, params), subject, new JacksonStringMapper)
             .map(await)
 
-    def consumeRequest(endpointName: String, method: RequestMethod, params: Map[String, String]): Option[Any] =
+    def consumeRequest(endpointName: String, method: String, params: Map[String, String]): Option[Any] =
         consumeRequest(endpointName, method, "/" + endpointName, params)
 
-    def consumeRequest(endpointName: String, method: RequestMethod): Option[Any] =
+    def consumeRequest(endpointName: String, method: String): Option[Any] =
         consumeRequest(endpointName, method, "/" + endpointName, Map())
 
     private def uniqueEndpointConsumer[A <: Api: TypeTag] =

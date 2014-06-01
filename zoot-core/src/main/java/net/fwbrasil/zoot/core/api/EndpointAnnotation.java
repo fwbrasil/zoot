@@ -10,6 +10,6 @@ import net.fwbrasil.zoot.core.request.RequestMethod;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EndpointAnnotation {
-	RequestMethod method() default RequestMethod.GET;
+	String method() default RequestMethod.GET;
 	String path();
 }

@@ -19,6 +19,6 @@ object requestMethod {
     def fromSpray(method: HttpMethod) =
         reverseMethodsMap(method)
 
-    def toSpray(method: RequestMethod) =
+    def toSpray(method: String) =
         methodsMap(method)
 }

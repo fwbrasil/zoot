@@ -6,7 +6,7 @@ import net.fwbrasil.zoot.core.request.RequestPath
 import net.fwbrasil.zoot.core.request.RequestPathTemplate
 
 case class EndpointTemplate private[EndpointTemplate] (
-    method: RequestMethod, path: RequestPathTemplate) {
+    method: String, path: RequestPathTemplate) {
 
     def tryParse(request: Request) =
         if (request.method == method)
@@ -17,7 +17,7 @@ case class EndpointTemplate private[EndpointTemplate] (
 
 object EndpointTemplate {
     
-    def apply(method: RequestMethod, path: String) =
+    def apply(method: String, path: String) =
         new EndpointTemplate(
             method,
             RequestPathTemplate(RequestPath(path)))

@@ -7,7 +7,7 @@ class RequestSpec extends Spec {
     val path = "/path"
 
     "method" - {
-        def test(method: RequestMethod) =
+        def test(method: String) =
             Request(path, method).method shouldBe method
 
         "get" in test(RequestMethod.GET)

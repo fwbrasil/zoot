@@ -19,6 +19,6 @@ object requestMethod {
     def fromFinagle(method: HttpMethod) =
         mapping(method)
 
-    def toFinagle(method: RequestMethod) =
+    def toFinagle(method: String) =
         reverseMapping(method)
 }
