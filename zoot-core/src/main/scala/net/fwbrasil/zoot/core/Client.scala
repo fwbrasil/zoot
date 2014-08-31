@@ -21,6 +21,7 @@ object Client {
 
     def apply[A <: Api: ClassTag](
         dispatcher: Request => Future[Response[Array[Byte]]],
+        hostHeader: Option[String] = None,
         charset: Charset = Charset.defaultCharset)(
             implicit apiTag: TypeTag[A],
             mirror: Mirror,
@@ -29,7 +30,7 @@ object Client {
 
         val producerByJavaMethod =
             Endpoint.listFor[A]
-                .map(new RequestProducer(_))
+                .map(new RequestProducer(_, hostHeader))
                 .groupByUnique(_.javaMethod)
 
         def string(bytes: Array[Byte]) =

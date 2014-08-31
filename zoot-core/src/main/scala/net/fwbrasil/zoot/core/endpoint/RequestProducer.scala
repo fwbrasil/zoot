@@ -11,7 +11,7 @@ import scala.reflect.runtime.universe._
 import scala.reflect.api.Universe
 import scala.reflect.api.Mirror
 
-case class RequestProducer[A <: Api](endpoint: Endpoint[A]) {
+case class RequestProducer[A <: Api](endpoint: Endpoint[A], hostHeader: Option[String]) {
 
     import endpoint._
 
@@ -25,7 +25,8 @@ case class RequestProducer[A <: Api](endpoint: Endpoint[A]) {
             pathString(mapper, params),
             template.method,
             params.mapValues(encode(_, mapper)),
-            Map("Content-Type" -> mapper.contentType)
+            Map("Content-Type" -> mapper.contentType) ++
+                hostHeader.map("Host" -> _)
         )
     }
 

@@ -16,13 +16,13 @@ class RequestProducerSpec extends Spec {
 
     "RequestProducer" - {
         "javaMethod" in {
-            uniqueEndpointProducer[TestApi5].javaMethod shouldBe
+            uniqueEndpointProducer[TestApi5]().javaMethod shouldBe
                 classOf[TestApi5].getMethod("goodendpoint")
         }
         "produceRequest" - {
             val mapper = new JacksonStringMapper
             "fixed path" in {
-                uniqueEndpointProducer[TestApi6]
+                uniqueEndpointProducer[TestApi6]()
                     .produceRequest(
                         args = List("a"),
                         mapper = mapper
@@ -34,7 +34,7 @@ class RequestProducerSpec extends Spec {
                             headers = Map("Content-Type" -> mapper.contentType))
             }
             "path using param" in {
-                uniqueEndpointProducer[TestApi7]
+                uniqueEndpointProducer[TestApi7]()
                     .produceRequest(
                         args = List("21", "a"),
                         mapper = mapper
@@ -44,6 +44,19 @@ class RequestProducerSpec extends Spec {
                             path = "/endpoint2/21/",
                             params = Map("pathParam" -> "21", "param" -> "a"),
                             headers = Map("Content-Type" -> mapper.contentType))
+            }
+            "adds the host header" in {
+                val host = "host.com"
+                uniqueEndpointProducer[TestApi6](Some(host))
+                    .produceRequest(
+                        args = List("a"),
+                        mapper = mapper
+                    ) shouldBe
+                        Request(
+                            method = RequestMethod.GET,
+                            path = "/endpoint1",
+                            params = Map("param" -> "a"),
+                            headers = Map("Content-Type" -> mapper.contentType, "Host" -> host))
             }
         }
     }
@@ -73,8 +86,8 @@ class RequestProducerSpec extends Spec {
         def goodendpoint: Future[Response[Int]]
     }
 
-    private def uniqueEndpointProducer[A <: Api: TypeTag] =
-        RequestProducer(uniqueEndpoint[A])
+    private def uniqueEndpointProducer[A <: Api: TypeTag](hostHeader: Option[String] = None) =
+        RequestProducer(uniqueEndpoint[A], hostHeader)
 
     private def uniqueEndpoint[A <: Api: TypeTag] =
         Endpoint.listFor[A].onlyOne
