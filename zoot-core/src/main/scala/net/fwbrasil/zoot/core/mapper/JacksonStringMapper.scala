@@ -3,13 +3,12 @@ package net.fwbrasil.zoot.core.mapper
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.{ Type => JType }
 import java.util.concurrent.ConcurrentHashMap
-
 import scala.reflect.runtime.universe._
-
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.databind.DeserializationFeature
 
 class JacksonStringMapper(implicit mirror: Mirror) extends StringMapper {
 
@@ -18,6 +17,7 @@ class JacksonStringMapper(implicit mirror: Mirror) extends StringMapper {
     private val mapper = new ObjectMapper()
     mapper.registerModule(DefaultScalaModule)
     mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
     def decode[T: TypeTag](string: String): T =
         mapper.readValue(string, typeReference[T])

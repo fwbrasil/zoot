@@ -30,6 +30,10 @@ trait StringMapperSpec extends Spec {
             testValue(Nested("a", Simple(32)))
         "Complext type" in
             testValue(Option(Map("a" -> Option(Set(Nested("a", Simple(1)))))))
+        "Extra field" in {
+          val decoded = mapper.fromString[Simple]("""{"i": 1, "extra": 2}""")
+          decoded.i shouldBe 1
+        }
     }
 
     private def testValue[T: TypeTag](value: T) = {
