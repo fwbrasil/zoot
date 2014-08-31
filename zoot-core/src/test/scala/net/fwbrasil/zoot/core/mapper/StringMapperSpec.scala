@@ -31,8 +31,14 @@ trait StringMapperSpec extends Spec {
         "Complext type" in
             testValue(Option(Map("a" -> Option(Set(Nested("a", Simple(1)))))))
         "Extra field" in {
-          val decoded = mapper.fromString[Simple]("""{"i": 1, "extra": 2}""")
-          decoded.i shouldBe 1
+            val decoded = mapper.fromString[Simple]("""{"i": 1, "extra": 2}""")
+            decoded.i shouldBe 1
+        }
+        "Unescape string" in {
+            val string = "someString"
+            val encoded = mapper.toString(string)
+            val unescaped = mapper.unescapeString(encoded)
+            unescaped shouldBe string
         }
     }
 

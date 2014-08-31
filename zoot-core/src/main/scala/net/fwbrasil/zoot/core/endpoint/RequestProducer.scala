@@ -21,14 +21,25 @@ case class RequestProducer[A <: Api](endpoint: Endpoint[A]) {
 
     def produceRequest(args: List[Any], mapper: StringMapper) = {
         val params = sMethod.parameters.map(_.name).zip(args).toMap
-        val pathString = template.path.forParameters(params(_).toString).toString
         Request(
-            pathString,
+            pathString(mapper, params),
             template.method,
             params.mapValues(encode(_, mapper)),
             Map("Content-Type" -> mapper.contentType)
         )
     }
+
+    private def pathString(mapper: StringMapper, params: Map[String, Any]) =
+        template.path.forParameters(pathParam(_, params, mapper)).toString
+
+    private def pathParam(name: String, params: Map[String, Any], mapper: StringMapper) =
+        params(name) match {
+            case string: String =>
+                string
+            case other =>
+                val string = mapper.toString(other)
+                mapper.unescapeString(string)
+        }
 
     private def encode(value: Any, mapper: StringMapper) =
         value match {

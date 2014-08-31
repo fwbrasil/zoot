@@ -25,6 +25,16 @@ class JacksonStringMapper(implicit mirror: Mirror) extends StringMapper {
     def encode(value: Any) =
         mapper.writeValueAsString(value)
 
+    def unescapeString(value: String) =
+        value match {
+            case jsonString(value) =>
+                value
+            case other =>
+                other
+        }
+
+    private val jsonString = "\"(.*)\"".r
+
     private val typeReferenceCache = new ConcurrentHashMap[TypeTag[_], TypeReference[_]]
 
     private def typeReference[T](implicit tag: TypeTag[T]) = {

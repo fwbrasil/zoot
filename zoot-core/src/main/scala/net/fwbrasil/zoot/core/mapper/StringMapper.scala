@@ -27,6 +27,7 @@ trait StringMapper {
                 encode(value)
         }
 
+    def unescapeString(value: String): String
     protected def encode(value: Any): String
     protected def decode[T: TypeTag](value: String): T
 }
