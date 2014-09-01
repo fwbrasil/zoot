@@ -112,6 +112,10 @@ class EndpointSpec extends Spec {
                 }
             }
         }
+        "parametersByClass" in {
+            val endpoint = uniqueEndpoint[TestApi12]
+            endpoint.parametersByClass shouldBe List(classOf[Int], classOf[String]).zip(endpoint.sMethod.parameters)
+        }
     }
 
     trait TestApi1 extends Api {

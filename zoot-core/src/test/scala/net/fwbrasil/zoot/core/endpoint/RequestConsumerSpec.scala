@@ -11,6 +11,7 @@ import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.Spec
 import net.fwbrasil.zoot.core.response.ExceptionResponse
 import net.fwbrasil.zoot.core.response.ExceptionResponse
+import net.fwbrasil.zoot.core.Encoder
 
 class RequestConsumerSpec extends Spec {
 
@@ -105,12 +106,22 @@ class RequestConsumerSpec extends Spec {
                             ) shouldBe Some(23)
                         }
                     }
-                    "path parameter" - {
+                    "path parameter" in {
                         consumeRequest(
                             endpointName = "endpoint7",
                             method = RequestMethod.POST,
                             path = "/endpoint7/someValue"
                         ) shouldBe Some("someValue")
+                    }
+                    "custom encoder" in {
+                        consumeRequest(
+                            endpointName = "endpoint8",
+                            method = RequestMethod.POST,
+                            path = "/endpoint8",
+                            params = Map("param" -> "paramValue"),
+                            headers = Map("header" -> "headerValue"),
+                            encoders = List(new SessionEncoder)
+                        ) shouldBe Some(Session("headerValue", "paramValue"))
                     }
                 }
                 "invalid parameters" - {
@@ -125,7 +136,7 @@ class RequestConsumerSpec extends Spec {
                         exception.body.contains("Missing parameters List(test: net.fwbrasil.zoot.core.endpoint.Test)")
                     }
                     "wrong value" - {
-                        "primitive" - {
+                        "primitive" in {
                             val exception =
                                 intercept[ExceptionResponse[String]] {
                                     consumeRequest(
@@ -136,7 +147,7 @@ class RequestConsumerSpec extends Spec {
                                 }
                             exception.body.contains("Invalid value notanumber")
                         }
-                        "civilized" - {
+                        "civilized" in {
                             val exception =
                                 intercept[ExceptionResponse[String]] {
                                     consumeRequest(
@@ -174,6 +185,9 @@ class RequestConsumerSpec extends Spec {
 
         @endpoint(method = RequestMethod.POST, path = "/endpoint7/:pathParam")
         def endpoint7(pathParam: String): Future[String]
+        
+        @endpoint(method = RequestMethod.POST, path = "/endpoint8")
+        def endpoint8(session: Session): Future[Session]
     }
 
     def subject = new TestApi {
@@ -191,12 +205,14 @@ class RequestConsumerSpec extends Spec {
         def endpoint6(optional: Option[Int]) = Future.successful(optional.getOrElse(21))
 
         def endpoint7(pathParam: String) = Future.successful(pathParam)
+        
+        def endpoint8(session: Session) = Future.successful(session)
     }
 
-    def consumeRequest(endpointName: String, method: String, path: String, params: Map[String, String] = Map()): Option[Any] =
+    def consumeRequest(endpointName: String, method: String, path: String, params: Map[String, String] = Map(), headers: Map[String, String] = Map(), encoders: List[Encoder[_]] = List()): Option[Any] =
         Endpoint.listFor[TestApi]
-            .find(_.sMethod.name == endpointName).map(RequestConsumer(_)).get
-            .consumeRequest(Request(path, method, params), subject, new JacksonStringMapper)
+            .find(_.sMethod.name == endpointName).map(RequestConsumer(_, encoders.asInstanceOf[List[Encoder[Any]]])).get
+            .consumeRequest(Request(path, method, params, headers), subject, new JacksonStringMapper)
             .map(await)
 
     def consumeRequest(endpointName: String, method: String, params: Map[String, String]): Option[Any] =
@@ -206,7 +222,7 @@ class RequestConsumerSpec extends Spec {
         consumeRequest(endpointName, method, "/" + endpointName, Map())
 
     private def uniqueEndpointConsumer[A <: Api: TypeTag] =
-        RequestConsumer(uniqueEndpoint[A])
+        RequestConsumer(uniqueEndpoint[A], List())
 
     private def uniqueEndpoint[A <: Api: TypeTag] =
         Endpoint.listFor[A].onlyOne

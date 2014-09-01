@@ -9,6 +9,7 @@ import net.fwbrasil.zoot.core.request.RequestMethod
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.Spec
 import net.fwbrasil.zoot.core.response.Response
+import net.fwbrasil.zoot.core.Encoder
 
 class RequestProducerSpec extends Spec {
 
@@ -31,7 +32,9 @@ class RequestProducerSpec extends Spec {
                             method = RequestMethod.GET,
                             path = "/endpoint1",
                             params = Map("param" -> "a"),
-                            headers = Map("Content-Type" -> mapper.contentType))
+                            headers =
+                                Map("Content-Type" -> mapper.contentType,
+                                    "Host" -> "undefined"))
             }
             "path using param" in {
                 uniqueEndpointProducer[TestApi7]()
@@ -43,9 +46,11 @@ class RequestProducerSpec extends Spec {
                             method = RequestMethod.POST,
                             path = "/endpoint2/21/",
                             params = Map("pathParam" -> "21", "param" -> "a"),
-                            headers = Map("Content-Type" -> mapper.contentType))
+                            headers =
+                                Map("Content-Type" -> mapper.contentType,
+                                    "Host" -> "undefined"))
             }
-            "adds the host header" in {
+            "adds the specified host header" in {
                 val host = "host.com"
                 uniqueEndpointProducer[TestApi6](Some(host))
                     .produceRequest(
@@ -57,6 +62,18 @@ class RequestProducerSpec extends Spec {
                             path = "/endpoint1",
                             params = Map("param" -> "a"),
                             headers = Map("Content-Type" -> mapper.contentType, "Host" -> host))
+            }
+            "supports encoders" in {
+                val header = "headerValue"
+                val param = "paramValue"
+                val request =
+                    uniqueEndpointProducer[TestApi10](encoders = List(new SessionEncoder))
+                        .produceRequest(
+                            args = List(Session(header, param)),
+                            mapper = mapper
+                        )
+                request.headers should contain("header" -> header)
+                request.params should contain("param" -> param)
             }
         }
     }
@@ -86,8 +103,13 @@ class RequestProducerSpec extends Spec {
         def goodendpoint: Future[Response[Int]]
     }
 
-    private def uniqueEndpointProducer[A <: Api: TypeTag](hostHeader: Option[String] = None) =
-        RequestProducer(uniqueEndpoint[A], hostHeader)
+    trait TestApi10 extends Api {
+        @endpoint(path = "/path")
+        def endpoint(value: Session): Future[Response[Int]]
+    }
+
+    private def uniqueEndpointProducer[A <: Api: TypeTag](hostHeader: Option[String] = None, encoders: List[Encoder[_]] = List()) =
+        RequestProducer(uniqueEndpoint[A], hostHeader, encoders.asInstanceOf[List[Encoder[Any]]])
 
     private def uniqueEndpoint[A <: Api: TypeTag] =
         Endpoint.listFor[A].onlyOne

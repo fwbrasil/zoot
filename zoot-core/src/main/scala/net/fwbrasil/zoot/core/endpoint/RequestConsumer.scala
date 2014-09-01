@@ -11,10 +11,14 @@ import net.fwbrasil.zoot.core.response.ResponseStatus
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.smirror.SMethod
 import scala.reflect.runtime.universe._
+import net.fwbrasil.zoot.core.Encoder
 
-case class RequestConsumer[A <: Api](endpoint: Endpoint[A])(implicit mirror: Mirror) {
+case class RequestConsumer[A <: Api](endpoint: Endpoint[A], encoders: List[Encoder[Any]])(implicit mirror: Mirror) {
 
     import endpoint._
+
+    private val encodersByClass =
+        encoders.map(e => e.cls -> e).toMap
 
     def consumeRequest(request: Request, instance: A, mapper: StringMapper) =
         template.tryParse(request).map { pathParams =>
@@ -30,7 +34,7 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A])(implicit mirror: Mir
         def getParam(name: String) =
             pathParams.get(name)
                 .orElse(request.params.get(name))
-        verifyMissingParams(paramValues(getParam, instance, mapper))
+        verifyMissingParams(paramValues(request, getParam, instance, mapper))
     }
 
     private def verifyMissingParams(values: Iterable[(SParameter[A], Option[Any])]) = {
@@ -45,12 +49,17 @@ case class RequestConsumer[A <: Api](endpoint: Endpoint[A])(implicit mirror: Mir
         }
     }
 
-    private def paramValues(getParam: String => Option[String], instance: A, mapper: StringMapper) =
+    private def paramValues(request: Request, getParam: String => Option[String], instance: A, mapper: StringMapper) =
         parameters.zipWith { param =>
-            getParam(param.name)
-                .map(URLDecoder.decode)
-                .map(readParam(param, _, mapper))
-                .orElse(param.defaultValueMethodOption.map(_.invoke(instance)))
+            encodersByClass.get(param.sClass.javaClassOption.get.asInstanceOf[Class[Any]]) match {
+                case Some(encoder) =>
+                    Some(encoder.decode(request))
+                case other =>
+                    getParam(param.name)
+                        .map(URLDecoder.decode)
+                        .map(readParam(param, _, mapper))
+                        .orElse(param.defaultValueMethodOption.map(_.invoke(instance)))
+            }
         }
 
     private val stringSClass = sClassOf[String]

@@ -20,10 +20,11 @@ case class Server[A <: Api: Manifest](instance: A)(
     implicit mapper: StringMapper,
     exctx: ExecutionContext,
     mirror: Mirror,
+    encoders: List[Encoder[_]] = List(),
     charset: Charset = Charset.defaultCharset)
     extends (Request => Future[Response[Array[Byte]]]) {
 
-    val consumers = Endpoint.listFor[A].map(new RequestConsumer(_))
+    private val consumers = Endpoint.listFor[A].map(new RequestConsumer(_, encoders.asInstanceOf[List[Encoder[Any]]]))
 
     def apply(request: Request) =
         consumers.findDefined { consumer =>

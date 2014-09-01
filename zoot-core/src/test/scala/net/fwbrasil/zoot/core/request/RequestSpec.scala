@@ -72,4 +72,13 @@ class RequestSpec extends Spec {
             Request(path).host shouldBe None
         }
     }
+    
+    "addHeaders" in {
+        val headers = Map("header" -> "value")
+        Request(path).addHeaders(headers).headers shouldBe headers
+    }
+    
+    "addParam" in {
+        Request(path).addParam("key", "value").params shouldBe Map("key" -> "value")
+    }
 }

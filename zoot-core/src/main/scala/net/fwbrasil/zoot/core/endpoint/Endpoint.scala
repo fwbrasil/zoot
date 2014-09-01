@@ -48,6 +48,9 @@ case class Endpoint[A <: Api](
             case other =>
                 None
         }
+    
+    val parametersByClass =
+        sMethod.parameters.map(e => e.sClass.javaClassOption.get.asInstanceOf[Class[Any]] -> e)
 }
 
 object Endpoint {

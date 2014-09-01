@@ -21,7 +21,7 @@ class ClientSpec extends Spec {
         "without parameters" in {
             val client =
                 Client[TestApi] { request =>
-                    request shouldBe Request("/endpoint1/", headers = Map("Content-Type" -> mapper.contentType))
+                    request shouldBe Request("/endpoint1/", headers = Map("Content-Type" -> mapper.contentType, "Host" -> "undefined"))
                     Future.successful(Response("\"a\"".getBytes))
                 }
             await(client.endpoint1) shouldBe "a"
@@ -29,7 +29,7 @@ class ClientSpec extends Spec {
         "with path param" in {
             val client =
                 Client[TestApi] { request =>
-                    request shouldBe Request("/12/endpoint2/", method = RequestMethod.POST, params = Map("pathValue" -> "12"), headers = Map("Content-Type" -> mapper.contentType))
+                    request shouldBe Request("/12/endpoint2/", method = RequestMethod.POST, params = Map("pathValue" -> "12"), headers = Map("Content-Type" -> mapper.contentType, "Host" -> "undefined"))
                     Future.successful(Response("34".getBytes))
                 }
             await(client.endpoint2(12)) shouldBe 34

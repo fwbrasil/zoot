@@ -9,4 +9,10 @@ case class Request(
 
     val requestPath = RequestPath(path)
     val host = headers.get("Host")
+
+    def addHeaders(headers: Map[String, String]) =
+        this.copy(headers = this.headers ++ headers)
+        
+    def addParam(name: String, value: String) =
+        this.copy(params = params + (name -> value))
 }
