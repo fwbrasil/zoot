@@ -36,16 +36,14 @@ case class Server[A <: Api: Manifest](instance: A)(
                         Response(body = Array[Byte](), status = ResponseStatus.NOT_FOUND)
                     case value: String =>
                         Response(value.getBytes(charset))
-                    case value =>
+                    case value =>   
                         Response(mapper.toString(value).getBytes(charset))
                 }.recover {
-                    case response @ ExceptionResponse(body: Array[Byte], status, headers) =>
-                        ExceptionResponse(body, status, headers)
-                    case response @ ExceptionResponse(body: String, status, headers) =>
+                    case ExceptionResponse(body: String, status, headers) =>
                         ExceptionResponse(body.getBytes(charset), status, headers)
                 }
             }
         }.getOrElse {
-            Future.successful(Response(body = Array[Byte](), status = ResponseStatus.NOT_FOUND))
+            Future.successful(Response(body = Array(), status = ResponseStatus.NOT_FOUND))
         }
 }

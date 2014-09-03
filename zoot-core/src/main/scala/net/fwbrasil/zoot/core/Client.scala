@@ -47,10 +47,8 @@ object Client {
                             Option(mapper.fromString(string(response.body))(producer.endpoint.payloadOptionType.get))
                         case response if (producer.endpoint.payloadIsResponseByteArray) =>
                             response
-                        case response: NormalResponse[_] if (producer.endpoint.payloadIsResponse) =>
-                            response.copy(body = mapper.fromString(string(response.body))(bodyTypeTag(mirror, producer)))
-                        case response: ExceptionResponse[_] if (producer.endpoint.payloadIsResponse) =>
-                            response.copy(body = mapper.fromString(string(response.body))(bodyTypeTag(mirror, producer)))
+                        case response: Response[_] if (producer.endpoint.payloadIsResponse) =>
+                            response.withBody(body = mapper.fromString(string(response.body))(bodyTypeTag(mirror, producer)))
                         case response if (response.status == ResponseStatus.OK) =>
                             mapper.fromString(string(response.body))(producer.endpoint.payloadTypeTag)
                         case response =>

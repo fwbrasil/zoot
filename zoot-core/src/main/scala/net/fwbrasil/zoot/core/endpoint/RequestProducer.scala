@@ -38,15 +38,13 @@ case class RequestProducer[A <: Api](endpoint: Endpoint[A], hostHeader: Option[S
 
     private def createRequest(args: List[Any], mapper: StringMapper) = {
         val params = sMethod.parameters.map(_.name).zip(args).toMap
-        var request =
-            Request(
-                pathString(mapper, params),
-                template.method,
-                Map(),
-                Map("Content-Type" -> mapper.contentType) +
-                    ("Host" -> hostHeader.getOrElse("undefined"))
-            )
-        request
+        Request(
+            pathString(mapper, params),
+            template.method,
+            Map(),
+            Map("Content-Type" -> mapper.contentType) +
+                ("Host" -> hostHeader.getOrElse("undefined"))
+        )
     }
 
     private def pathString(mapper: StringMapper, params: Map[String, Any]) =
