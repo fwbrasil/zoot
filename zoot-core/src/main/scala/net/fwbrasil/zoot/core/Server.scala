@@ -21,7 +21,7 @@ case class Server[A <: Api: Manifest](instance: A)(
     exctx: ExecutionContext,
     mirror: Mirror,
     encoders: List[Encoder[_]] = List(),
-    charset: Charset = Charset.defaultCharset)
+    charset: Charset = Charset.forName("UTF-8"))
     extends (Request => Future[Response[Array[Byte]]]) {
 
     private val consumers = Endpoint.listFor[A].map(new RequestConsumer(_, encoders.asInstanceOf[List[Encoder[Any]]]))
