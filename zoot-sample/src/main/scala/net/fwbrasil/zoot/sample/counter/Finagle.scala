@@ -12,6 +12,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import net.fwbrasil.zoot.finagle.FinagleClient
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import com.twitter.finagle.http.RichHttp
+import com.twitter.finagle.http.Request
 
 object FinagleMain extends App {
 
@@ -21,7 +23,7 @@ object FinagleMain extends App {
 
     val client = {
         val clientBuilder = ClientBuilder()
-            .codec(Http())
+            .codec(RichHttp[Request](Http()))
             .hosts(s"localhost:$port")
             .hostConnectionLimit(5)
 
@@ -31,7 +33,7 @@ object FinagleMain extends App {
     val server = {
         val serverBuilder =
             ServerBuilder()
-                .codec(Http())
+                .codec(RichHttp[Request](Http()))
                 .bindTo(new InetSocketAddress(port))
                 .name("CounterServer")
 
