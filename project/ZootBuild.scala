@@ -68,7 +68,7 @@ object ZootBuild extends Build {
     def commonSettings =
         Defaults.defaultSettings ++ ScoverageSbtPlugin.instrumentSettings ++ CoverallsPlugin.coverallsSettings ++ Seq(
             organization := "net.fwbrasil",
-            version := "0.10",
+            version := "0.13",
             publishMavenStyle := true,
             scalaVersion := "2.10.3",
             parallelExecution in Test := false,
@@ -78,7 +78,7 @@ object ZootBuild extends Build {
             publishTo <<= version { v: String =>
                 val nexus = "https://oss.sonatype.org/"
                 val fwbrasil = "http://fwbrasil.net/maven/"
-                if (true || v.trim.endsWith("SNAPSHOT"))
+                if (v.trim.endsWith("SNAPSHOT"))
                     Option(Resolver.ssh("fwbrasil.net repo", "fwbrasil.net", 8080) as ("maven") withPermissions ("0644"))
                 else
                     Some("releases" at nexus + "service/local/staging/deploy/maven2")
