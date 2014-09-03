@@ -23,7 +23,7 @@ object Client {
         dispatcher: Request => Future[Response[Array[Byte]]],
         hostHeader: Option[String] = None,
         encoders: List[Encoder[_]] = List(),
-        charset: Charset = Charset.defaultCharset)(
+        charset: Charset = Charset.forName("UTF-8"))(
             implicit apiTag: TypeTag[A],
             mirror: Mirror,
             mapper: StringMapper,
