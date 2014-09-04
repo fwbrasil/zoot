@@ -4,8 +4,6 @@ sealed trait Response[T] {
     val status: ResponseStatus
     val headers: Map[String, String]
     val body: T
-    
-    def withBody[U](body: U): Response[U]
 }
 
 object Response {
@@ -19,18 +17,11 @@ object Response {
 case class NormalResponse[T](body: T = "",
                              status: ResponseStatus = ResponseStatus.OK,
                              headers: Map[String, String] = Map())
-    extends Response[T] {
-    
-    def withBody[U](body: U) =
-        this.copy(body = body)
-}
+    extends Response[T] 
 
-case class ExceptionResponse[T](body: T = "",
-                                status: ResponseStatus = ResponseStatus.INTERNAL_SERVER_ERROR,
-                                headers: Map[String, String] = Map())
+case class ExceptionResponse(body: String = "",
+                             status: ResponseStatus = ResponseStatus.INTERNAL_SERVER_ERROR,
+                             headers: Map[String, String] = Map())
     extends Exception
-    with Response[T] {
+    with Response[String] 
     
-    def withBody[U](body: U) =
-        this.copy(body = body)
-}

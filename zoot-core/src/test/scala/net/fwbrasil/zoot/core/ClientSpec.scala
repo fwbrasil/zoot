@@ -42,7 +42,7 @@ class ClientSpec extends Spec {
                     Future.successful(Response(description.getBytes, status))
                 }
             val exception =
-                intercept[ExceptionResponse[Array[Byte]]] {
+                intercept[ExceptionResponse] {
                     await(client.endpoint1)
                 }
             exception.status shouldBe status

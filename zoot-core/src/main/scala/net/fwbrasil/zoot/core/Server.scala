@@ -24,24 +24,13 @@ case class Server[A <: Api: Manifest](instance: A)(
     charset: Charset = Charset.forName("UTF-8"))
     extends (Request => Future[Response[Array[Byte]]]) {
 
-    private val consumers = Endpoint.listFor[A].map(new RequestConsumer(_, encoders.asInstanceOf[List[Encoder[Any]]]))
+    private val consumers =
+        Endpoint.listFor[A].map(new RequestConsumer(_, encoders.asInstanceOf[List[Encoder[Any]]]))
 
     def apply(request: Request) =
         consumers.findDefined { consumer =>
-            consumer.consumeRequest(request, instance, mapper).map {
-                _.map {
-                    case response: Response[_] if consumer.endpoint.payloadIsResponseByteArray =>
-                        response.asInstanceOf[Response[Array[Byte]]]
-                    case None =>
-                        Response(body = Array[Byte](), status = ResponseStatus.NOT_FOUND)
-                    case value: String =>
-                        Response(value.getBytes(charset))
-                    case value =>   
-                        Response(mapper.toString(value).getBytes(charset))
-                }.recover {
-                    case ExceptionResponse(body: String, status, headers) =>
-                        ExceptionResponse(body.getBytes(charset), status, headers)
-                }
+            consumer.consumeRequest(request, instance, mapper).map { value =>
+                consumer.endpoint.responseEncoder.encode(value, charset)
             }
         }.getOrElse {
             Future.successful(Response(body = Array(), status = ResponseStatus.NOT_FOUND))

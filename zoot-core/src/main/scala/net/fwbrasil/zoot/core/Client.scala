@@ -16,6 +16,7 @@ import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.util.Stub
 import scala.reflect.runtime.universe._
 import java.nio.charset.Charset
+import net.fwbrasil.zoot.core.response.NormalResponse
 
 object Client {
 
@@ -40,28 +41,12 @@ object Client {
         Stub[A] {
             (method, args) =>
                 producerByJavaMethod.get(method).map { producer =>
-                    dispatcher(producer.produceRequest(args.toList, mapper)).map {
-                        case response if (producer.endpoint.payloadIsOption && response.status == ResponseStatus.NOT_FOUND) =>
-                            None
-                        case response if (producer.endpoint.payloadIsOption && response.status != ResponseStatus.NOT_FOUND) =>
-                            Option(mapper.fromString(string(response.body))(producer.endpoint.payloadOptionType.get))
-                        case response if (producer.endpoint.payloadIsResponseByteArray) =>
-                            response
-                        case response: Response[_] if (producer.endpoint.payloadIsResponse) =>
-                            response.withBody(body = mapper.fromString(string(response.body))(bodyTypeTag(mirror, producer)))
-                        case response if (response.status == ResponseStatus.OK) =>
-                            mapper.fromString(string(response.body))(producer.endpoint.payloadTypeTag)
-                        case response =>
-                            throw new ExceptionResponse(response.body, response.status, response.headers)
-                    }
+                    val response = dispatcher(producer.produceRequest(args.toList, mapper))
+                    producer
+                        .endpoint
+                        .responseEncoder
+                        .decode(response, charset)
                 }
         }
     }
-
-    private def bodyTypeTag(pMirror: Mirror, producer: RequestProducer[_]) =
-        new TypeTag[Any] {
-            override def in[U <: scala.reflect.api.Universe with Singleton](otherMirror: scala.reflect.api.Mirror[U]): U#TypeTag[Any] = ???
-            def tpe = producer.endpoint.payloadTypeTag.tpe.asInstanceOf[TypeRef].args.head
-            val mirror = pMirror
-        }
 }

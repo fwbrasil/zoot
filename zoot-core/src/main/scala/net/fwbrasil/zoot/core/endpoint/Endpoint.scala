@@ -6,7 +6,6 @@ import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe.Mirror
 import scala.reflect.runtime.universe.TypeRefApi
 import scala.reflect.runtime.universe.typeOf
-
 import net.fwbrasil.smirror.SMethod
 import net.fwbrasil.smirror.sClassOf
 import net.fwbrasil.zoot.core.Api
@@ -14,12 +13,15 @@ import net.fwbrasil.zoot.core.api.EndpointAnnotation
 import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import scala.reflect.runtime.universe._
+import java.nio.charset.Charset
+import scala.concurrent.ExecutionContext
+import net.fwbrasil.zoot.core.mapper.StringMapper
 
 case class Endpoint[A <: Api](
     template: EndpointTemplate,
     sMethod: SMethod[A])(
         implicit mirror: Mirror) {
-    
+
     require(sMethod.returnType == sClassOf[Future[_]],
         s"Endpoint method '${sMethod.name}' should return scala.concurrent.Future.")
 
@@ -35,7 +37,7 @@ case class Endpoint[A <: Api](
     val payloadIsOption =
         payloadTypeTag.tpe.erasure <:< typeOf[Option[_]]
 
-    val payloadOptionType =
+    val payloadGenericType =
         payloadTypeTag.tpe match {
             case tp: TypeRefApi =>
                 tp.args.headOption.map { typ =>
@@ -48,9 +50,12 @@ case class Endpoint[A <: Api](
             case other =>
                 None
         }
-    
+
     val parametersByClass =
         sMethod.parameters.map(e => e.sClass.javaClassOption.get.asInstanceOf[Class[Any]] -> e)
+
+    def responseEncoder =
+        new ResponseEncoder(this)
 }
 
 object Endpoint {

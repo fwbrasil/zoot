@@ -127,7 +127,7 @@ class RequestConsumerSpec extends Spec {
                 "invalid parameters" - {
                     "missing" in {
                         val exception =
-                            intercept[ExceptionResponse[String]] {
+                            intercept[ExceptionResponse] {
                                 consumeRequest(
                                     endpointName = "endpoint4",
                                     method = RequestMethod.PUT
@@ -138,7 +138,7 @@ class RequestConsumerSpec extends Spec {
                     "wrong value" - {
                         "primitive" in {
                             val exception =
-                                intercept[ExceptionResponse[String]] {
+                                intercept[ExceptionResponse] {
                                     consumeRequest(
                                         endpointName = "endpoint5",
                                         method = RequestMethod.GET,
@@ -149,7 +149,7 @@ class RequestConsumerSpec extends Spec {
                         }
                         "civilized" in {
                             val exception =
-                                intercept[ExceptionResponse[String]] {
+                                intercept[ExceptionResponse] {
                                     consumeRequest(
                                         endpointName = "endpoint4",
                                         method = RequestMethod.PUT,

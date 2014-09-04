@@ -42,7 +42,7 @@ class ResponseSpec extends Spec {
 
     "throw exception response" in {
         val response =
-            intercept[ExceptionResponse[_]] {
+            intercept[ExceptionResponse] {
                 throw ExceptionResponse(body, status, headers)
             }
         response.status shouldBe status
