@@ -7,20 +7,20 @@ trait StringMapper {
 
     val contentType: String
 
-    def fromString[T: TypeTag](string: String): T = 
+    def fromString[T: TypeTag](string: String): T =
         string match {
+            case _ if (typeOf[T] =:= typeOf[String]) =>
+                string.asInstanceOf[T]
             case "" if (typeOf[T].<:<(typeOf[Unit])) =>
                 {}.asInstanceOf[T]
             case other =>
-                try decode[T](string)
-                catch {
-                    case e: Exception if (typeOf[T] =:= typeOf[String]) =>
-                        string.asInstanceOf[T]
-                }
+                decode[T](string)
         }
 
     def toString(value: Any) =
         value match {
+            case string: String =>
+                value.asInstanceOf[String]
             case _: BoxedUnit =>
                 ""
             case other =>

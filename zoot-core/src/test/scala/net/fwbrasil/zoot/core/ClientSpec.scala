@@ -22,7 +22,7 @@ class ClientSpec extends Spec {
             val client =
                 Client[TestApi] { request =>
                     request shouldBe Request("/endpoint1/", headers = Map("Content-Type" -> mapper.contentType, "Host" -> "undefined"))
-                    Future.successful(Response("\"a\"".getBytes))
+                    Future.successful(Response("a".getBytes))
                 }
             await(client.endpoint1) shouldBe "a"
         }

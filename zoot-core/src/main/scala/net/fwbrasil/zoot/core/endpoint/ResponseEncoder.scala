@@ -17,8 +17,6 @@ class ResponseEncoder(endpoint: Endpoint[_]) {
                 response.asInstanceOf[Response[Array[Byte]]]
             case None =>
                 Response(body = Array[Byte](), status = ResponseStatus.NOT_FOUND)
-            case value: String =>
-                Response(value.getBytes(charset))
             case value =>
                 Response(mapper.toString(value).getBytes(charset))
         }.recover {
