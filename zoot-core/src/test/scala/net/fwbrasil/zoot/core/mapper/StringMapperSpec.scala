@@ -36,9 +36,7 @@ trait StringMapperSpec extends Spec {
         }
         "Unescape string" in {
             val string = "someString"
-            val encoded = mapper.toString(string)
-            val unescaped = mapper.unescapeString(encoded)
-            unescaped shouldBe string
+            mapper.toString(string) shouldBe string
         }
     }
 

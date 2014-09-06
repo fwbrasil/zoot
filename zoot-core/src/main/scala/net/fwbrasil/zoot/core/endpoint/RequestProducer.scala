@@ -58,9 +58,7 @@ case class RequestProducer[A <: Api](endpoint: Endpoint[A], hostHeader: Option[S
             case value: String =>
                 encode(value)
             case other =>
-                val string = mapper.toString(value)
-                val unescaped = mapper.unescapeString(string)
-                encode(unescaped)
+                encode(mapper.toString(value))
         }
 
     private def encode(string: String) =

@@ -14,7 +14,7 @@ class ResponseEncoder(endpoint: Endpoint[_]) {
 
     def encode(value: Future[Any], charset: Charset)(implicit ctx: ExecutionContext, mapper: StringMapper) =
         value.map {
-            case response: Response[_] if endpoint.payloadIsResponseByteArray =>
+            case response if endpoint.payloadIsResponseByteArray =>
                 response.asInstanceOf[Response[Array[Byte]]]
             case None =>
                 Response(body = Array[Byte](), status = ResponseStatus.NOT_FOUND)
