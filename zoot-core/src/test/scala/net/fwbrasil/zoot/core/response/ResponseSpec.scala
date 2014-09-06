@@ -5,7 +5,7 @@ import net.fwbrasil.zoot.core.Spec
 class ResponseSpec extends Spec {
 
     "default builder" in {
-        Response() shouldBe NormalResponse()
+        Response() shouldBe Response()
     }
 
     val status = ResponseStatus.CONTINUE
@@ -15,11 +15,11 @@ class ResponseSpec extends Spec {
     "normal response" - {
 
         "default values" in {
-            NormalResponse() shouldBe NormalResponse()
+            Response() shouldBe Response()
         }
 
         "specified values" in {
-            val response = NormalResponse(body, status, headers)
+            val response = Response(body, status, headers)
             response.status shouldBe status
             response.body shouldBe body
             response.headers shouldBe headers

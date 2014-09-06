@@ -1,13 +1,14 @@
 package net.fwbrasil.zoot.core.endpoint
 
-import net.fwbrasil.zoot.core.response.Response
-import net.fwbrasil.zoot.core.response.ExceptionResponse
-import net.fwbrasil.zoot.core.response.NormalResponse
-import net.fwbrasil.zoot.core.response.ResponseStatus
-import net.fwbrasil.zoot.core.mapper.StringMapper
 import java.nio.charset.Charset
-import scala.concurrent.Future
+
 import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+
+import net.fwbrasil.zoot.core.mapper.StringMapper
+import net.fwbrasil.zoot.core.response.ExceptionResponse
+import net.fwbrasil.zoot.core.response.Response
+import net.fwbrasil.zoot.core.response.ResponseStatus
 
 class ResponseEncoder(endpoint: Endpoint[_]) {
 
@@ -33,7 +34,7 @@ class ResponseEncoder(endpoint: Endpoint[_]) {
                     None
                 else
                     Option(mapper.fromString(string(response.body, charset))(endpoint.payloadGenericType.get))
-            case response: NormalResponse[_] if (endpoint.payloadIsResponse) =>
+            case response if (endpoint.payloadIsResponse) =>
                 response.copy(body = mapper.fromString(string(response.body, charset))(endpoint.payloadGenericType.get))
             case response if (response.status == ResponseStatus.OK) =>
                 mapper.fromString(string(response.body, charset))(endpoint.payloadTypeTag)

@@ -9,14 +9,12 @@ import net.fwbrasil.zoot.core.endpoint.RequestProducer
 import net.fwbrasil.zoot.core.mapper.StringMapper
 import net.fwbrasil.zoot.core.request.Request
 import net.fwbrasil.zoot.core.response.ExceptionResponse
-import net.fwbrasil.zoot.core.response.NormalResponse
-import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.response.ResponseStatus
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.util.Stub
 import scala.reflect.runtime.universe._
 import java.nio.charset.Charset
-import net.fwbrasil.zoot.core.response.NormalResponse
+import net.fwbrasil.zoot.core.response.Response
 
 object Client {
 

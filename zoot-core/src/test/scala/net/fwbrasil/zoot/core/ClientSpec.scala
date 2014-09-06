@@ -10,7 +10,7 @@ import net.fwbrasil.zoot.core.response.ResponseStatus
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import net.fwbrasil.zoot.core.response.ExceptionResponse
-import net.fwbrasil.zoot.core.response.NormalResponse
+import net.fwbrasil.zoot.core.response.Response
 
 class ClientSpec extends Spec {
 
@@ -85,7 +85,7 @@ class ClientSpec extends Spec {
             }
 
             "Response[CaseClass]" - {
-                def test(response: NormalResponse[Any]) = {
+                def test(response: Response[Any]) = {
                     val client =
                         Client[TestApi] { request =>
                             Future.successful(response.copy(body = mapper.toString(response.body).getBytes))
@@ -94,10 +94,10 @@ class ClientSpec extends Spec {
                 }
 
                 "ok" in {
-                    test(NormalResponse(CaseClass(1, "s")))
+                    test(Response(CaseClass(1, "s")))
                 }
                 "nok" in {
-                    test(NormalResponse(CaseClass(3, "b"), ResponseStatus.BAD_GATEWAY))
+                    test(Response(CaseClass(3, "b"), ResponseStatus.BAD_GATEWAY))
                 }
             }
         }
