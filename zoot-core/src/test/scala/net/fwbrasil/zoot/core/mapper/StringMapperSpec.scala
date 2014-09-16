@@ -12,8 +12,6 @@ trait StringMapperSpec extends Spec {
     s"The $mapperName should support" - {
         "Unit" in
             testValue({})
-        "String" in
-            testValue("value")
         "Tuple" in
             testValue(("a", 1))
         "Map" in
@@ -34,7 +32,7 @@ trait StringMapperSpec extends Spec {
             val decoded = mapper.fromString[Simple]("""{"i": 1, "extra": 2}""")
             decoded.i shouldBe 1
         }
-        "Unescape string" in {
+        "String" in {
             val string = "someString"
             mapper.toString(string) shouldBe string
         }

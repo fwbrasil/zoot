@@ -1,8 +1,9 @@
 package net.fwbrasil.zoot.core
 
-import scala.reflect._
+import scala.reflect.ClassTag
+import scala.reflect.classTag
+
 import net.fwbrasil.zoot.core.request.Request
-import net.fwbrasil.smirror.SClass
 
 abstract class Encoder[T: ClassTag] {
     

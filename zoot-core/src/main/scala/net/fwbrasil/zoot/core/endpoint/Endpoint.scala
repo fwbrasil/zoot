@@ -2,20 +2,14 @@ package net.fwbrasil.zoot.core.endpoint
 
 import scala.concurrent.Future
 import scala.reflect.api.Universe
-import scala.reflect.runtime.universe
-import scala.reflect.runtime.universe.Mirror
-import scala.reflect.runtime.universe.TypeRefApi
-import scala.reflect.runtime.universe.typeOf
+import scala.reflect.runtime.universe._
+
 import net.fwbrasil.smirror.SMethod
 import net.fwbrasil.smirror.sClassOf
 import net.fwbrasil.zoot.core.Api
 import net.fwbrasil.zoot.core.api.EndpointAnnotation
 import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
-import scala.reflect.runtime.universe._
-import java.nio.charset.Charset
-import scala.concurrent.ExecutionContext
-import net.fwbrasil.zoot.core.mapper.StringMapper
 
 case class Endpoint[A <: Api](
     template: EndpointTemplate,

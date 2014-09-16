@@ -1,14 +1,17 @@
 package net.fwbrasil.zoot.core.mapper
 
 import java.lang.reflect.ParameterizedType
-import java.lang.reflect.{ Type => JType }
+import java.lang.reflect.{Type => JType}
 import java.util.concurrent.ConcurrentHashMap
+
 import scala.reflect.runtime.universe._
+
 import com.fasterxml.jackson.core.`type`.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.databind.DeserializationFeature
+
 
 class JacksonStringMapper(implicit mirror: Mirror) extends StringMapper {
 

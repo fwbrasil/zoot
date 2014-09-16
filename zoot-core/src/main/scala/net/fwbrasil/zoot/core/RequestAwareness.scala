@@ -1,8 +1,7 @@
 package net.fwbrasil.zoot.core
 
-import net.fwbrasil.zoot.core.request.Request
-import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.smirror.SMethod
+import net.fwbrasil.zoot.core.request.Request
 
 trait RequestAwareness extends Api {
 

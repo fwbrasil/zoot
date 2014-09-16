@@ -1,7 +1,6 @@
 package net.fwbrasil.zoot.core.endpoint
 
 import net.fwbrasil.zoot.core.request.Request
-import net.fwbrasil.zoot.core.request.RequestMethod
 import net.fwbrasil.zoot.core.request.RequestPath
 import net.fwbrasil.zoot.core.request.RequestPathTemplate
 

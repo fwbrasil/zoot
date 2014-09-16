@@ -1,8 +1,9 @@
 package net.fwbrasil.zoot.core.filter
 
+import scala.concurrent.Future
+
 import net.fwbrasil.zoot.core.request.Request
 import net.fwbrasil.zoot.core.response.Response
-import scala.concurrent.Future
 
 trait Filter extends ((Request, (Request => Future[Response[Array[Byte]]])) => Future[Response[Array[Byte]]]) {
     self =>

@@ -1,16 +1,11 @@
 package net.fwbrasil.zoot.core.endpoint
 
-import scala.reflect.runtime.universe._
 import java.net.URLEncoder
+
 import net.fwbrasil.zoot.core.Api
+import net.fwbrasil.zoot.core.Encoder
 import net.fwbrasil.zoot.core.mapper.StringMapper
 import net.fwbrasil.zoot.core.request.Request
-import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
-import net.fwbrasil.zoot.core.response.Response
-import scala.reflect.runtime.universe._
-import scala.reflect.api.Universe
-import scala.reflect.api.Mirror
-import net.fwbrasil.zoot.core.Encoder
 
 case class RequestProducer[A <: Api](endpoint: Endpoint[A], hostHeader: Option[String], encoders: List[Encoder[Any]]) {
 

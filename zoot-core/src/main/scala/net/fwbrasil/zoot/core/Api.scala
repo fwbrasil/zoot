@@ -1,9 +1,10 @@
 package net.fwbrasil.zoot.core
 
-import net.fwbrasil.zoot.core.api.EndpointAnnotation
-import net.fwbrasil.smirror.SMethod
-import net.fwbrasil.zoot.core.request.Request
 import scala.concurrent.Future
+
+import net.fwbrasil.smirror.SMethod
+import net.fwbrasil.zoot.core.api.EndpointAnnotation
+import net.fwbrasil.zoot.core.request.Request
 
 trait Api {
 

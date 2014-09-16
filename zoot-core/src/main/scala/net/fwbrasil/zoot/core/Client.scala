@@ -1,20 +1,20 @@
 package net.fwbrasil.zoot.core
 
+import java.nio.charset.Charset
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import scala.reflect.ClassTag
-import scala.reflect.runtime.universe._
+import scala.reflect.runtime.universe.Mirror
+
 import net.fwbrasil.zoot.core.endpoint.Endpoint
 import net.fwbrasil.zoot.core.endpoint.RequestProducer
 import net.fwbrasil.zoot.core.mapper.StringMapper
 import net.fwbrasil.zoot.core.request.Request
-import net.fwbrasil.zoot.core.response.ExceptionResponse
-import net.fwbrasil.zoot.core.response.ResponseStatus
+import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.util.Stub
 import scala.reflect.runtime.universe._
-import java.nio.charset.Charset
-import net.fwbrasil.zoot.core.response.Response
 
 object Client {
 
@@ -32,9 +32,6 @@ object Client {
             Endpoint.listFor[A]
                 .map(new RequestProducer(_, hostHeader, encoders.asInstanceOf[List[Encoder[Any]]]))
                 .groupByUnique(_.javaMethod)
-
-        def string(bytes: Array[Byte]) =
-            new String(bytes, charset)
 
         Stub[A] {
             (method, args) =>

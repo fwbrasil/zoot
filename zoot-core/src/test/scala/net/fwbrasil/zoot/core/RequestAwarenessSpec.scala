@@ -9,6 +9,7 @@ import net.fwbrasil.zoot.core.mapper.JacksonStringMapper
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import net.fwbrasil.zoot.core.response.ResponseStatus
 
 class RequestAwarenessSpec extends Spec {
 
@@ -46,9 +47,7 @@ class RequestAwarenessSpec extends Spec {
     }
 
     "fail if withRequest is used in a future" in {
-        intercept[IllegalStateException] {
-            responseFor(Request(path = "/test2"))
-        }
+        responseFor(Request(path = "/test2")).status === ResponseStatus.INTERNAL_SERVER_ERROR
     }
 
 }
