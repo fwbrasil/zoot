@@ -14,7 +14,6 @@ import net.fwbrasil.zoot.core.request.Request
 import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.util.Stub
-import scala.reflect.runtime.universe._
 
 object Client {
 
@@ -23,8 +22,7 @@ object Client {
         hostHeader: Option[String] = None,
         encoders: List[Encoder[_]] = List(),
         charset: Charset = Charset.forName("UTF-8"))(
-            implicit apiTag: TypeTag[A],
-            mirror: Mirror,
+            implicit mirror: Mirror,
             mapper: StringMapper,
             exctx: ExecutionContext) = {
 

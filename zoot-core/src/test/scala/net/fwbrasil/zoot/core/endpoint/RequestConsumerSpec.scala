@@ -12,6 +12,7 @@ import net.fwbrasil.zoot.core.Spec
 import net.fwbrasil.zoot.core.response.ExceptionResponse
 import net.fwbrasil.zoot.core.response.ExceptionResponse
 import net.fwbrasil.zoot.core.Encoder
+import scala.reflect.ClassTag
 
 class RequestConsumerSpec extends Spec {
 
@@ -221,9 +222,9 @@ class RequestConsumerSpec extends Spec {
     def consumeRequest(endpointName: String, method: String): Option[Any] =
         consumeRequest(endpointName, method, "/" + endpointName, Map())
 
-    private def uniqueEndpointConsumer[A <: Api: TypeTag] =
+    private def uniqueEndpointConsumer[A <: Api: ClassTag] =
         RequestConsumer(uniqueEndpoint[A], List())
 
-    private def uniqueEndpoint[A <: Api: TypeTag] =
+    private def uniqueEndpoint[A <: Api: ClassTag] =
         Endpoint.listFor[A].onlyOne
 }

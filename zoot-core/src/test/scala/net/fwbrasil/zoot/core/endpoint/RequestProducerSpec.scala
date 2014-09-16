@@ -10,6 +10,7 @@ import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.Spec
 import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.Encoder
+import scala.reflect.ClassTag
 
 class RequestProducerSpec extends Spec {
 
@@ -108,9 +109,9 @@ class RequestProducerSpec extends Spec {
         def endpoint(value: Session): Future[Response[Int]]
     }
 
-    private def uniqueEndpointProducer[A <: Api: TypeTag](hostHeader: Option[String] = None, encoders: List[Encoder[_]] = List()) =
+    private def uniqueEndpointProducer[A <: Api: ClassTag](hostHeader: Option[String] = None, encoders: List[Encoder[_]] = List()) =
         RequestProducer(uniqueEndpoint[A], hostHeader, encoders.asInstanceOf[List[Encoder[Any]]])
 
-    private def uniqueEndpoint[A <: Api: TypeTag] =
+    private def uniqueEndpoint[A <: Api: ClassTag] =
         Endpoint.listFor[A].onlyOne
 }

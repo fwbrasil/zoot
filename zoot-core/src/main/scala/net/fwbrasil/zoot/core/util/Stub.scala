@@ -1,22 +1,21 @@
 package net.fwbrasil.zoot.core.util
 
 import java.lang.reflect.Method
-
 import scala.concurrent.Future
 import scala.reflect.runtime.universe._
 import scala.tools.reflect.ToolBox
-
 import net.sf.cglib.proxy.Enhancer
 import net.sf.cglib.proxy.MethodInterceptor
 import net.sf.cglib.proxy.MethodProxy
+import scala.reflect._
 
 object Stub {
 
     private var stubClassCache = Map[String, Class[_]]()
 
-    def apply[T](callback: (Method, Array[Object]) => Option[Future[Any]])(implicit mirror: Mirror, tag: TypeTag[T]) =
+    def apply[T: ClassTag](callback: (Method, Array[Object]) => Option[Future[Any]])(implicit mirror: Mirror) =
         synchronized {
-            val typeDescription = tag.tpe.toString
+            val typeDescription = classTag[T].toString
             val stubClass = cachedStubClass(typeDescription)
             Enhancer.create(stubClass, interceptor(callback)).asInstanceOf[T]
         }

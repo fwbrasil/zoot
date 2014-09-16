@@ -9,6 +9,7 @@ import net.fwbrasil.zoot.core.request.RequestMethod
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
 import net.fwbrasil.zoot.core.Spec
 import net.fwbrasil.zoot.core.response.Response
+import scala.reflect.ClassTag
 
 class EndpointSpec extends Spec {
 
@@ -197,6 +198,6 @@ class EndpointSpec extends Spec {
         def goodendpoint: Future[Response[Int]]
     }
 
-    private def uniqueEndpoint[A <: Api: TypeTag] =
+    private def uniqueEndpoint[A <: Api: ClassTag] =
         Endpoint.listFor[A].onlyOne
 }

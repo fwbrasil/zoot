@@ -1,15 +1,15 @@
 package net.fwbrasil.zoot.core.endpoint
 
 import scala.concurrent.Future
-import scala.reflect.api.Universe
+import scala.reflect._
 import scala.reflect.runtime.universe._
-
 import net.fwbrasil.smirror.SMethod
 import net.fwbrasil.smirror.sClassOf
 import net.fwbrasil.zoot.core.Api
 import net.fwbrasil.zoot.core.api.EndpointAnnotation
 import net.fwbrasil.zoot.core.response.Response
 import net.fwbrasil.zoot.core.util.RichIterable.RichIterable
+import scala.reflect.api.Universe
 
 case class Endpoint[A <: Api](
     template: EndpointTemplate,
@@ -54,9 +54,9 @@ case class Endpoint[A <: Api](
 
 object Endpoint {
 
-    def listFor[A <: Api: TypeTag](implicit mirror: Mirror) =
+    def listFor[A <: Api: ClassTag](implicit mirror: Mirror) =
         synchronized {
-            sClassOf[A].methods
+            sClassOf(classTag[A].runtimeClass.asInstanceOf[Class[A]]).methods
                 .zipWith(_.getAnnotation(classOf[EndpointAnnotation]))
                 .collect {
                     case (sMethod, Some(endpointAnnotation)) if (sMethod.isAbstract) =>
