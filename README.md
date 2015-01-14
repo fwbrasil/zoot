@@ -1,4 +1,6 @@
 # Zoot
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fwbrasil/zoot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://secure.travis-ci.org/fwbrasil/zoot.png)](http://travis-ci.org/fwbrasil/zoot)
 [![Coverage Status](https://coveralls.io/repos/fwbrasil/zoot/badge.png)](https://coveralls.io/r/fwbrasil/zoot)
 
