@@ -68,7 +68,7 @@ object ZootBuild extends Build {
     def commonSettings =
         Defaults.defaultSettings ++ ScoverageSbtPlugin.instrumentSettings ++ CoverallsPlugin.coverallsSettings ++ Seq(
             organization := "net.fwbrasil",
-            version := "0.13",
+            version := "0.14",
             publishMavenStyle := true,
             scalaVersion := "2.10.3",
             parallelExecution in Test := false,
